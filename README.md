@@ -1,5 +1,7 @@
 # UserPoolIdentityProviderGithub CDK construct
 
+Version: 2.0.0
+
 This library bundles the [GitHub OpenID Connect Wrapper for Cognito](https://github.com/TimothyJones/github-cognito-openid-wrapper) as a CDK construct, instead of the original SAM implementation.
 
 The goal behind is to make it as easy to use GitHub as an identity provider as officially supported identity providers. Under the hood, it creates additional resources (a REST API and 5 Lambda functions) to connect Cognito to GitHub.

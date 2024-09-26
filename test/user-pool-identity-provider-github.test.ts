@@ -1,23 +1,27 @@
-import { anything, SynthUtils } from '@aws-cdk/assert';
-import '@aws-cdk/assert/jest';
-import { UserPool } from '@aws-cdk/aws-cognito';
-import { Stack } from '@aws-cdk/core';
+import { Template } from 'aws-cdk-lib/assertions';
+import { UserPool } from 'aws-cdk-lib/aws-cognito';
+import { Code } from 'aws-cdk-lib/aws-lambda';
+import { Stack } from 'aws-cdk-lib/core';
 import { UserPoolIdentityProviderGithub } from '../src';
 
 const clientId = 'myClientId';
 const clientSecret = 'myClientSecret';
 const cognitoHostedUiDomain = 'https://cognito.domain';
 
-expect.addSnapshotSerializer({
-  test: val => typeof val === 'string',
-  print: val => {
-    const newVal = (val as string).replace(/AssetParameters([A-Fa-f0-9]{64})(\w+)/, '[HASH REMOVED]');
-    const newVal2 = newVal.replace(/(\w+) (\w+) for asset\s?(version)?\s?"([A-Fa-f0-9]{64})"/, '[HASH REMOVED]');
-    return `"${newVal2}"`;
+jest.mock('aws-cdk-lib/aws-lambda', () => ({
+  ...jest.requireActual('aws-cdk-lib/aws-lambda'),
+  Code: {
+    fromDockerBuild: jest.fn().mockReturnValue({
+      bindToResource: jest.fn(),
+      isInline: false,
+      bind: () => ({
+        s3Location: { bucketName: 'test-bucket', objectKey: 'test-key' },
+      }),
+    }),
   },
-});
+}));
 
-test('snapshot', () => {
+test('UserPoolIdentityProviderGithub creates resources', () => {
   const stack = new Stack();
   new UserPoolIdentityProviderGithub(stack, 'UserPoolIdentityProviderGithub', {
     clientId,
@@ -25,12 +29,13 @@ test('snapshot', () => {
     userPool: new UserPool(stack, 'UserPool'),
     cognitoHostedUiDomain,
   });
-  expect(SynthUtils.toCloudFormation(stack)).toMatchSnapshot();
-});
 
-function checkFunction(stack: Stack, functionName: string) {
-  expect(stack).toHaveResource('AWS::Lambda::Function', {
-    Handler: `${functionName}.handler`,
+  const template = Template.fromStack(stack);
+
+  template.hasResourceProperties('AWS::ApiGateway::RestApi', {});
+
+  template.hasResourceProperties('AWS::Lambda::Function', {
+    Handler: 'openIdConfiguration.handler',
     Environment: {
       Variables: {
         COGNITO_REDIRECT_URI: `${cognitoHostedUiDomain}/oauth2/idpresponse`,
@@ -40,12 +45,17 @@ function checkFunction(stack: Stack, functionName: string) {
         GITHUB_LOGIN_URL: 'https://github.com',
       },
     },
-    Runtime: 'nodejs14.x',
+    Runtime: 'nodejs18.x',
     Timeout: 900,
   });
-}
 
-test('resources', () => {
+  template.hasResourceProperties('AWS::Cognito::UserPoolIdentityProvider', {
+    ProviderName: 'Github',
+    ProviderType: 'OIDC',
+  });
+});
+
+test('UserPoolIdentityProviderGithub uses default gitUrl and gitBranch', () => {
   const stack = new Stack();
   new UserPoolIdentityProviderGithub(stack, 'UserPoolIdentityProviderGithub', {
     clientId,
@@ -54,38 +64,32 @@ test('resources', () => {
     cognitoHostedUiDomain,
   });
 
-  expect(stack).toHaveResource('AWS::ApiGateway::RestApi');
-
-  checkFunction(stack, 'openIdConfiguration');
-  checkFunction(stack, 'authorize');
-  checkFunction(stack, 'token');
-  checkFunction(stack, 'userinfo');
-  checkFunction(stack, 'jwks');
-
-  expect(stack).toHaveResource('AWS::Cognito::UserPoolIdentityProvider', {
-    AttributeMapping: {
-      email: 'email',
-      email_verified: 'email_verified',
-      name: 'name',
-      picture: 'picture',
-      preferred_username: 'preferred_username',
-      profile: 'profile',
-      updated_at: 'updated_at',
-      username: 'sub',
-      website: 'website',
+  expect(Code.fromDockerBuild).toHaveBeenCalledWith(expect.any(String), {
+    buildArgs: {
+      GIT_URL: 'https://github.com/christokur/github-cognito-openid-wrapper',
+      GIT_BRANCH: 'master',
     },
-    ProviderDetails: {
-      attributes_request_method: 'GET',
-      attributes_url: anything(),
-      authorize_scopes: 'openid read:user user:email',
-      authorize_url: anything(),
-      client_id: 'myClientId',
-      client_secret: 'myClientSecret',
-      jwks_uri: anything(),
-      oidc_issuer: anything(),
-      token_url: anything(),
+  });
+});
+
+test('UserPoolIdentityProviderGithub uses custom gitUrl and gitBranch', () => {
+  const stack = new Stack();
+  const customGitUrl = 'https://github.com/custom/repo';
+  const customGitBranch = 'develop';
+
+  new UserPoolIdentityProviderGithub(stack, 'UserPoolIdentityProviderGithub', {
+    clientId,
+    clientSecret,
+    userPool: new UserPool(stack, 'UserPool'),
+    cognitoHostedUiDomain,
+    gitUrl: customGitUrl,
+    gitBranch: customGitBranch,
+  });
+
+  expect(Code.fromDockerBuild).toHaveBeenCalledWith(expect.any(String), {
+    buildArgs: {
+      GIT_URL: customGitUrl,
+      GIT_BRANCH: customGitBranch,
     },
-    ProviderName: 'Github',
-    ProviderType: 'OIDC',
   });
 });

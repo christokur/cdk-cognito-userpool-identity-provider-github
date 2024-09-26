@@ -1,13 +1,8 @@
+import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { CfnUserPoolIdentityProvider, UserPool } from 'aws-cdk-lib/aws-cognito';
 import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { Construct } from 'constructs';
-import { Duration } from 'aws-cdk-lib';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 export interface IUserPoolIdentityProviderGithubProps {
   /**
@@ -63,19 +58,10 @@ export class UserPoolIdentityProviderGithub extends Construct {
     const wellKnownResource = api.root.addResource('.well-known');
 
     const commonFunctionProps = {
-      code: Code.fromAsset(path.join(__dirname), {
-        bundling: {
-          image: Runtime.NODEJS_18_X.bundlingImage,
-          command: [
-            'bash', '-c',
-            `
-            git clone ${props.gitUrl ?? 'https://github.com/christokur/github-cognito-openid-wrapper'} .
-            git checkout ${props.gitBranch ?? 'master'}
-            npm ci
-            npm run build
-            cp -r . /asset-output
-            `
-          ],
+      code: Code.fromDockerBuild(__dirname, {
+        buildArgs: {
+          GIT_URL: props.gitUrl ?? 'https://github.com/christokur/github-cognito-openid-wrapper',
+          GIT_BRANCH: props.gitBranch ?? 'master',
         },
       }),
       environment: {

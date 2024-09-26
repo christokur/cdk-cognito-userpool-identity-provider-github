@@ -1,13 +1,18 @@
 {
   "dependencies": [
     {
+      "name": "@jest/globals",
+      "version": "^29",
+      "type": "build"
+    },
+    {
       "name": "@types/jest",
       "version": "^27",
       "type": "build"
     },
     {
       "name": "@types/node",
-      "version": "^16 <= 16.18.78",
+      "version": "^18 <= 18.11.19",
       "type": "build"
     },
     {
@@ -44,11 +49,6 @@
       "type": "build"
     },
     {
-      "name": "glob",
-      "version": "^10.0.0",
-      "type": "build"
-    },
-    {
       "name": "jest-junit",
       "version": "^15",
       "type": "build"
@@ -73,12 +73,12 @@
     },
     {
       "name": "jsii-rosetta",
-      "version": "1.x",
+      "version": "~5.0.0",
       "type": "build"
     },
     {
       "name": "jsii",
-      "version": "1.x",
+      "version": "~5.0.0",
       "type": "build"
     },
     {
@@ -101,6 +101,7 @@
     },
     {
       "name": "typescript",
+      "version": "~4.9.5",
       "type": "build"
     },
     {
@@ -120,7 +121,7 @@
     },
     {
       "name": "constructs",
-      "version": "10.0.0",
+      "version": "^10.0.5",
       "type": "peer"
     },
     {
@@ -130,7 +131,7 @@
     },
     {
       "name": "constructs",
-      "version": "10.0.0",
+      "version": "^10.0.5",
       "type": "runtime"
     }
   ],

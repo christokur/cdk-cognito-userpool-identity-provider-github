@@ -5,9 +5,14 @@
     "type": "git",
     "url": "git@github.com:christokur/cdk-user-pool-identity-provider-github.git"
   },
+  "bin": {
+    "bootstrap.sh": "bin/bootstrap.sh",
+    "template-expander.py": "bin/template-expander.py"
+  },
   "scripts": {
     "build": "npx projen build",
     "bump": "npx projen bump",
+    "clean": "npx projen clean",
     "clobber": "npx projen clobber",
     "compat": "npx projen compat",
     "compile": "npx projen compile",
@@ -23,6 +28,7 @@
     "pre-compile": "npx projen pre-compile",
     "release": "npx projen release",
     "test": "npx projen test",
+    "test:debug": "npx projen test:debug",
     "test:watch": "npx projen test:watch",
     "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
@@ -35,8 +41,9 @@
     "organization": false
   },
   "devDependencies": {
+    "@jest/globals": "^29",
     "@types/jest": "^27",
-    "@types/node": "^16 <= 16.18.78",
+    "@types/node": "^18 <= 18.11.19",
     "@typescript-eslint/eslint-plugin": "^7",
     "@typescript-eslint/parser": "^7",
     "commit-and-tag-version": "^12",
@@ -44,27 +51,26 @@
     "eslint-import-resolver-node": "^0.3.6",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.24.2",
-    "glob": "^10.0.0",
     "jest": "^27",
     "jest-junit": "^15",
-    "jsii": "1.x",
+    "jsii": "~5.0.0",
     "jsii-diff": "^1.103.1",
     "jsii-docgen": "^10.5.0",
     "jsii-pacmak": "^1.103.1",
-    "jsii-rosetta": "1.x",
+    "jsii-rosetta": "~5.0.0",
     "json-schema": "^0.4.0",
     "projen": "^0.88.0",
     "ts-jest": "^27",
     "ts-node": "^10.9.2",
-    "typescript": "^5.1.6"
+    "typescript": "~4.9.5"
   },
   "peerDependencies": {
     "aws-cdk-lib": "^2.100.0",
-    "constructs": "10.0.0"
+    "constructs": "^10.0.5"
   },
   "dependencies": {
     "aws-cdk-lib": "2.100.0",
-    "constructs": "10.0.0"
+    "constructs": "^10.0.5"
   },
   "overrides": {
     "@types/babel__traverse": "7.18.2",
@@ -74,6 +80,9 @@
   "keywords": [
     "cdk"
   ],
+  "engines": {
+    "node": ">= 18.0.0"
+  },
   "main": "lib/index.js",
   "license": "Apache-2.0",
   "publishConfig": {
@@ -82,12 +91,26 @@
   "version": "0.0.0",
   "jest": {
     "coverageProvider": "v8",
+    "verbose": true,
+    "testEnvironment": "node",
     "testMatch": [
+      "**/*.test.ts",
       "<rootDir>/@(src|test)/**/*(*.)@(spec|test).ts?(x)",
       "<rootDir>/@(src|test)/**/__tests__/**/*.ts?(x)",
       "<rootDir>/@(projenrc)/**/*(*.)@(spec|test).ts?(x)",
       "<rootDir>/@(projenrc)/**/__tests__/**/*.ts?(x)"
     ],
+    "preset": "ts-jest",
+    "globals": {
+      "ts-jest": {
+        "tsconfig": "tsconfig.dev.json",
+        "diagnostics": {
+          "ignoreCodes": [
+            151001
+          ]
+        }
+      }
+    },
     "clearMocks": true,
     "collectCoverage": true,
     "coverageReporters": [
@@ -115,13 +138,7 @@
           "outputDirectory": "test-reports"
         }
       ]
-    ],
-    "preset": "ts-jest",
-    "globals": {
-      "ts-jest": {
-        "tsconfig": "tsconfig.dev.json"
-      }
-    }
+    ]
   },
   "types": "lib/index.d.ts",
   "stability": "stable",
