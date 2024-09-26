@@ -1,7 +1,13 @@
-import { LambdaIntegration, RestApi } from '@aws-cdk/aws-apigateway';
-import { CfnUserPoolIdentityProvider, UserPool } from '@aws-cdk/aws-cognito';
-import { Code, Function, Runtime } from '@aws-cdk/aws-lambda';
-import { Construct, Duration } from '@aws-cdk/core';
+import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
+import { CfnUserPoolIdentityProvider, UserPool } from 'aws-cdk-lib/aws-cognito';
+import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { Construct } from 'constructs';
+import { Duration } from 'aws-cdk-lib';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export interface IUserPoolIdentityProviderGithubProps {
   /**
@@ -57,10 +63,19 @@ export class UserPoolIdentityProviderGithub extends Construct {
     const wellKnownResource = api.root.addResource('.well-known');
 
     const commonFunctionProps = {
-      code: Code.fromDockerBuild(__dirname, {
-        buildArgs: {
-          GIT_URL: props.gitUrl ?? 'https://github.com/TimothyJones/github-cognito-openid-wrapper',
-          GIT_BRANCH: props.gitBranch ?? 'v1.2.0',
+      code: Code.fromAsset(path.join(__dirname), {
+        bundling: {
+          image: Runtime.NODEJS_18_X.bundlingImage,
+          command: [
+            'bash', '-c',
+            `
+            git clone ${props.gitUrl ?? 'https://github.com/christokur/github-cognito-openid-wrapper'} .
+            git checkout ${props.gitBranch ?? 'master'}
+            npm ci
+            npm run build
+            cp -r . /asset-output
+            `
+          ],
         },
       }),
       environment: {
@@ -70,7 +85,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
         GITHUB_API_URL: 'https://api.github.com',
         GITHUB_LOGIN_URL: 'https://github.com',
       },
-      runtime: Runtime.NODEJS_14_X,
+      runtime: Runtime.NODEJS_18_X,
       timeout: Duration.minutes(15),
     };
     const openIdDiscoveryFunction = new Function(

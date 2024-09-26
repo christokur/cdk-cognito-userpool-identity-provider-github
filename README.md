@@ -6,8 +6,11 @@ The goal behind is to make it as easy to use GitHub as an identity provider as o
 
 ## ⚠️ Project status
 
-At a first glance, the proposed construct is supposed to work. However, we ended up not using GitHub with Cognito and we cannot rightfully maintain a construct without using it. For this reason, we're archiving this repository. If anyone wants to maintain it, please open an issue.
-If you decide to use this construct (at your own risks), be aware that a new SSH key might be generated every time the Dockerfile is built which could lead to a very short interruption of service during deployment. A solution would be to generate the SSH key outside of CDK and pass it through the context for instance.
+This project has been upgraded to use CDK v2 (version 2.100.0). However, please note that this repository is archived and not actively maintained. Use at your own risk.
+
+If you decide to use this construct, be aware that:
+- A new SSH key might be generated every time the Dockerfile is built, which could lead to a very short interruption of service during deployment.
+- There are some known deprecation warnings related to testing dependencies. See [KNOWN_ISSUES.md](./KNOWN_ISSUES.md) for details.
 
 ## Install
 
@@ -23,7 +26,7 @@ Other package managers aren't supported yet, but they could be easily. Let us kn
 
 ## Usage
 
-This construct works in a similar way than [officially supported identity providers](https://docs.aws.amazon.com/cdk/api/latest/docs/aws-cognito-readme.html#identity-providers).
+This construct works in a similar way to [officially supported identity providers](https://docs.aws.amazon.com/cdk/api/latest/docs/aws-cognito-readme.html#identity-providers).
 
 See [API](./API.md) for a full reference.
 
@@ -51,7 +54,7 @@ The following snippet does the following:
 - Create a user pool client with Cognito and Github as identity providers
 
 ```ts
-import { DnsValidatedCertificate } as acm from '@aws-cdk/aws-certificatemanager';
+import { DnsValidatedCertificate } from '@aws-cdk/aws-certificatemanager';
 import { UserPool } from '@aws-cdk/aws-cognito';
 import { ARecord, RecordTarget } from '@aws-cdk/aws-route53';
 import { UserPoolIdentityProviderGithub } from 'cdk-user-pool-identity-provider-github';
@@ -112,13 +115,9 @@ userPoolClient.node.addDependency(userPoolIdentityProviderGithub);
 
 ## Contributing
 
-Feedback and pull requests are more than welcome 🤗
+This project uses the [projen](https://github.com/projen/projen) project generator. 
 
-This project uses the [projen](https://github.com/projen/projen) project generator. Learn how to use it for CDK constructs [here](https://github.com/projen/projen/blob/main/docs/awscdk-construct.md).
-
-Please use [conventional commits](https://www.conventionalcommits.org) to ease automated versioning and changelog generation.
-
-Note that the github-cognito-openid-wrapper version is defined [here](./src/Dockerfile). To benefit from newer versions, please update the git tag in the Dockerfile.
+Please note that this project is no longer actively maintained.
 
 ## License
 

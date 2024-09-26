@@ -3,85 +3,90 @@
   "description": "A CDK construct that adds GitHub as an identity provider to a Cognito user pool",
   "repository": {
     "type": "git",
-    "url": "https://github.com/scenario-labs/cdk-user-pool-identity-provider-github.git"
+    "url": "git@github.com:christokur/cdk-user-pool-identity-provider-github.git"
   },
   "scripts": {
-    "clobber": "npx projen clobber",
-    "compile": "npx projen compile",
-    "test:compile": "npx projen test:compile",
-    "test": "npx projen test",
     "build": "npx projen build",
-    "test:watch": "npx projen test:watch",
-    "test:update": "npx projen test:update",
     "bump": "npx projen bump",
-    "unbump": "npx projen unbump",
-    "upgrade-dependencies": "npx projen upgrade-dependencies",
-    "upgrade-projen": "npx projen upgrade-projen",
-    "default": "npx projen default",
-    "watch": "npx projen watch",
-    "package": "npx projen package",
-    "eslint": "npx projen eslint",
+    "clobber": "npx projen clobber",
     "compat": "npx projen compat",
+    "compile": "npx projen compile",
+    "default": "npx projen default",
     "docgen": "npx projen docgen",
-    "projen": "npx projen",
-    "start": "npx projen start"
+    "eject": "npx projen eject",
+    "eslint": "npx projen eslint",
+    "package": "npx projen package",
+    "package-all": "npx projen package-all",
+    "package:js": "npx projen package:js",
+    "post-compile": "npx projen post-compile",
+    "post-upgrade": "npx projen post-upgrade",
+    "pre-compile": "npx projen pre-compile",
+    "release": "npx projen release",
+    "test": "npx projen test",
+    "test:watch": "npx projen test:watch",
+    "unbump": "npx projen unbump",
+    "upgrade": "npx projen upgrade",
+    "watch": "npx projen watch",
+    "projen": "npx projen"
   },
   "author": {
-    "name": "Scenario",
-    "email": "cloud@scenario3d.com",
-    "url": "https://www.scenario3d.com",
-    "organization": true
+    "name": "Christo De Lange",
+    "email": "christo.delange@sands.com",
+    "organization": false
   },
   "devDependencies": {
-    "@aws-cdk/assert": "^1.95.2",
-    "@types/jest": "^26.0.24",
-    "@types/node": "^10.17.0",
-    "@typescript-eslint/eslint-plugin": "^4.32.0",
-    "@typescript-eslint/parser": "^4.32.0",
-    "eslint": "^7.32.0",
+    "@types/jest": "^27",
+    "@types/node": "^16 <= 16.18.78",
+    "@typescript-eslint/eslint-plugin": "^7",
+    "@typescript-eslint/parser": "^7",
+    "commit-and-tag-version": "^12",
+    "eslint": "^8",
     "eslint-import-resolver-node": "^0.3.6",
     "eslint-import-resolver-typescript": "^2.5.0",
     "eslint-plugin-import": "^2.24.2",
-    "jest": "^27.2.2",
-    "jest-junit": "^12",
-    "jsii": "^1.34.0",
-    "jsii-diff": "^1.34.0",
-    "jsii-docgen": "^1.8.110",
-    "jsii-pacmak": "^1.34.0",
-    "json-schema": "^0.3.0",
-    "npm-check-updates": "^11",
-    "projen": "^0.24.8",
-    "standard-version": "^9",
-    "ts-jest": "^27.0.5",
-    "typescript": "^4.4.3"
+    "glob": "^10.0.0",
+    "jest": "^27",
+    "jest-junit": "^15",
+    "jsii": "1.x",
+    "jsii-diff": "^1.103.1",
+    "jsii-docgen": "^10.5.0",
+    "jsii-pacmak": "^1.103.1",
+    "jsii-rosetta": "1.x",
+    "json-schema": "^0.4.0",
+    "projen": "^0.88.0",
+    "ts-jest": "^27",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.1.6"
   },
   "peerDependencies": {
-    "@aws-cdk/aws-apigateway": "^1.95.2",
-    "@aws-cdk/aws-cognito": "^1.95.2",
-    "@aws-cdk/aws-lambda": "^1.95.2",
-    "@aws-cdk/core": "^1.95.2",
-    "constructs": "^3.2.27"
+    "aws-cdk-lib": "^2.100.0",
+    "constructs": "10.0.0"
   },
   "dependencies": {
-    "@aws-cdk/aws-apigateway": "^1.95.2",
-    "@aws-cdk/aws-cognito": "^1.95.2",
-    "@aws-cdk/aws-lambda": "^1.95.2",
-    "@aws-cdk/core": "^1.95.2"
+    "aws-cdk-lib": "2.100.0",
+    "constructs": "10.0.0"
   },
-  "bundledDependencies": [],
+  "overrides": {
+    "@types/babel__traverse": "7.18.2",
+    "@types/prettier": "2.6.0",
+    "glob": "^10.0.0"
+  },
   "keywords": [
-    "CDK construct",
-    "Cognito user pool",
-    "Github",
     "cdk"
   ],
   "main": "lib/index.js",
-  "license": "MIT",
+  "license": "Apache-2.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "version": "0.0.0",
   "jest": {
+    "coverageProvider": "v8",
     "testMatch": [
-      "**/__tests__/**/*.ts?(x)",
-      "**/?(*.)+(spec|test).ts?(x)"
+      "<rootDir>/@(src|test)/**/*(*.)@(spec|test).ts?(x)",
+      "<rootDir>/@(src|test)/**/__tests__/**/*.ts?(x)",
+      "<rootDir>/@(projenrc)/**/*(*.)@(spec|test).ts?(x)",
+      "<rootDir>/@(projenrc)/**/__tests__/**/*.ts?(x)"
     ],
     "clearMocks": true,
     "collectCoverage": true,
@@ -89,6 +94,7 @@
       "json",
       "lcov",
       "clover",
+      "cobertura",
       "text"
     ],
     "coverageDirectory": "coverage",
@@ -113,7 +119,7 @@
     "preset": "ts-jest",
     "globals": {
       "ts-jest": {
-        "tsconfig": "tsconfig.jest.json"
+        "tsconfig": "tsconfig.dev.json"
       }
     }
   },
@@ -127,8 +133,5 @@
       "rootDir": "src"
     }
   },
-  "awscdkio": {
-    "announce": true
-  },
-  "//": "~~ Generated by projen. To modify, edit .projenrc.js and run \"npx projen\"."
+  "//": "~~ Generated by projen. To modify, edit .projenrc.ts and run \"npx projen\"."
 }
