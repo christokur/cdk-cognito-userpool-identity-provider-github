@@ -130,6 +130,9 @@ project.addTask('reinistall', {
 
 project.addTask('publish', {
   exec: 'node scripts/npm-publish-codeartifact.js',
+  env: {
+    "AWS_PROFILE": "cloud-services-prod",
+  },
 });
 
 // The Dockerfile isn't interpreted by TypeScript
