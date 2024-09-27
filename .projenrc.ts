@@ -135,6 +135,7 @@ project.addTask('publish', {
   },
 });
 
+project.preCompileTask.exec('node scripts/update-version.js');
 // The Dockerfile isn't interpreted by TypeScript
 // We need to copy it manually
 project.postCompileTask.exec('cp src/Dockerfile lib/');

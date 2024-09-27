@@ -40,12 +40,46 @@ if (versionContent.includes('-')) {
   process.env.BUILD_TYPE = BUILD_TYPE;
 }
 
-// Execute npm publish command
+// Function to recursively search for .tgz files
+function findTgzFiles(dir) {
+  let results = [];
+  const list = fs.readdirSync(dir);
+  list.forEach((file) => {
+    file = path.resolve(dir, file);
+    const stat = fs.statSync(file);
+    if (stat && stat.isDirectory()) {
+      results = results.concat(findTgzFiles(file));
+    } else if (path.extname(file) === '.tgz') {
+      results.push(file);
+    }
+  });
+  return results;
+}
+
+// Find the tgz file in the dist/ directory
+const distDir = path.join(process.cwd(), 'dist');
+let tgzFiles;
 try {
-  execSync(`npm publish --registry ${NPM_REGISTRY_URL} --tag ${process.env.BUILD_TYPE} --verbose`, { stdio: 'inherit' });
+  tgzFiles = findTgzFiles(distDir);
+  if (tgzFiles.length === 0) {
+    throw new Error('No .tgz files found in the dist/ directory or its subdirectories');
+  }
+  console.log(`Found .tgz files: ${tgzFiles.join(', ')}`);
 } catch (error) {
-  console.error('Error executing npm publish:', error);
+  console.error('Error finding tgz files:', error);
   process.exit(1);
 }
 
-console.log('npm publish completed successfully');
+// Execute npm publish command for each found tgz file
+tgzFiles.forEach((tgzFile) => {
+  try {
+    const publishCommand = `npm publish --registry ${NPM_REGISTRY_URL} --tag ${process.env.BUILD_TYPE} --verbose "${tgzFile}"`;
+    console.log(`Executing command: ${publishCommand}`);
+    execSync(publishCommand, { stdio: 'inherit' });
+    console.log(`npm publish completed successfully for ${tgzFile}`);
+  } catch (error) {
+    console.error(`Error executing npm publish for ${tgzFile}:`, error);
+  }
+});
+
+console.log('All publish operations completed.');
