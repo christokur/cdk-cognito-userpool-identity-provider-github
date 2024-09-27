@@ -211,6 +211,9 @@
     },
     "publish": {
       "name": "publish",
+      "env": {
+        "AWS_PROFILE": "cloud-services-prod"
+      },
       "steps": [
         {
           "exec": "node scripts/npm-publish-codeartifact.js"
