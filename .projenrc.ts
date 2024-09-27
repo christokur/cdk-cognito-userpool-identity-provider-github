@@ -3,7 +3,7 @@ const { NodePackageManager, TypeScriptModuleResolution } = require('projen/lib/j
 
 const project = new AwsCdkConstructLibrary({
   author: 'Christo De Lange',
-  authorAddress: 'christo.delange@sands.com',
+  authorAddress: 'sands@christodelange.com',
   cdkVersion: '2.100.0',
   defaultReleaseBranch: 'main',
   name: 'cdk-user-pool-identity-provider-github',
@@ -14,6 +14,11 @@ const project = new AwsCdkConstructLibrary({
   projenrcTs: true,
   packageManager: NodePackageManager.NPM,
   gitignore: ['/.aider*'],
+
+  majorVersion: 2,
+  minorVersion: 0,
+  releaseToNpm: true,
+  releaseWorkflow: true,
 
   // Node.js requirements
   minNodeVersion: '18.0.0',
@@ -33,7 +38,7 @@ const project = new AwsCdkConstructLibrary({
     'eslint-plugin-import@^2.24.2',
     'jest-junit@^15',
     'jsii-diff@^1.103.1',
-    'jsii-docgen@^10.5.0',
+    'jsii-docgen@^11.0.0',
     'jsii-pacmak@^1.103.1',
     'json-schema@^0.4.0',
     'projen@^0.88.0',
@@ -44,6 +49,8 @@ const project = new AwsCdkConstructLibrary({
     '@jest/globals@^29',
     '@typescript-eslint/eslint-plugin@^7',
     '@typescript-eslint/parser@^7',
+    'glob@^8.1.0',
+    'glob-promise@^6.0.2',
   ],
   bundledDeps: [],
   jest: true,
@@ -63,7 +70,7 @@ const project = new AwsCdkConstructLibrary({
       },
     },
   },
-  typescriptVersion: '~4.9.5',
+  typescriptVersion: '~5.3.3',
   tsconfig: {
     compilerOptions: {
       target: 'ES2020',
@@ -88,6 +95,12 @@ const project = new AwsCdkConstructLibrary({
       esModuleInterop: true,
     },
   },
+  eslint: true,
+  eslintOptions: {
+    dirs: ['src', 'test'],
+    extensions: ['.ts', '.tsx'],
+    lintProjenRc: false,
+  },
 });
 
 // Remove "type": "module" from package.json as we're using CommonJS now
@@ -96,11 +109,10 @@ project.package.addField('type', undefined);
 project.package.addField('overrides', {
   '@types/babel__traverse': '7.18.2',
   '@types/prettier': '2.6.0',
-  'glob': '^10.0.0',
 });
 
 // Explicitly set jsii and jsii-rosetta versions
-project.addDevDeps('jsii@~5.0.0', 'jsii-rosetta@~5.0.0');
+project.addDevDeps('jsii@~5.5.0', 'jsii-rosetta@~5.5.0');
 
 project.tsconfig?.addInclude('test/**/*.ts');
 
@@ -109,10 +121,28 @@ project.addTask('test:debug', {
 });
 
 project.addTask('clean', {
-  exec: 'rm -fr node_modules package-lock.json dist coverage test-reports',
+  exec: 'rm -fr node_modules dist coverage test-reports lib',
 });
+
+project.addTask('reinistall', {
+  exec: 'rm -fr node_modules package-lock.json dist coverage test-reports lib',
+});
+
+project.addTask('publish', {
+  exec: 'node scripts/npm-publish-codeartifact.js',
+});
+
+// The Dockerfile isn't interpreted by TypeScript
+// We need to copy it manually
+project.compileTask.exec('cp src/Dockerfile lib/');
 
 // Add a custom compilation step
 project.compileTask.reset('tsc && jsii --silence-warnings=reserved-word');
+
+// Update the existing ESLint task
+const eslintTask = project.tasks.tryFind('eslint');
+if (eslintTask) {
+  eslintTask.reset('eslint . --ext .ts,.tsx');
+}
 
 project.synth();

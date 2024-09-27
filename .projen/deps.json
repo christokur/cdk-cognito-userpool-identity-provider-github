@@ -49,6 +49,16 @@
       "type": "build"
     },
     {
+      "name": "glob-promise",
+      "version": "^6.0.2",
+      "type": "build"
+    },
+    {
+      "name": "glob",
+      "version": "^8.1.0",
+      "type": "build"
+    },
+    {
       "name": "jest-junit",
       "version": "^15",
       "type": "build"
@@ -73,12 +83,12 @@
     },
     {
       "name": "jsii-rosetta",
-      "version": "~5.0.0",
+      "version": "~5.5.0",
       "type": "build"
     },
     {
       "name": "jsii",
-      "version": "~5.0.0",
+      "version": "~5.5.0",
       "type": "build"
     },
     {
@@ -101,7 +111,7 @@
     },
     {
       "name": "typescript",
-      "version": "~4.9.5",
+      "version": "~5.3.3",
       "type": "build"
     },
     {

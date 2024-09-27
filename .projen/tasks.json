@@ -46,7 +46,7 @@
       "name": "clean",
       "steps": [
         {
-          "exec": "rm -fr node_modules package-lock.json dist coverage test-reports"
+          "exec": "rm -fr node_modules dist coverage test-reports lib"
         }
       ]
     },
@@ -135,8 +135,7 @@
       "description": "Runs eslint against the codebase",
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools projenrc .projenrc.ts",
-          "receiveArgs": true
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools projenrc .projenrc.ts"
         }
       ]
     },
@@ -207,11 +206,28 @@
       "name": "pre-compile",
       "description": "Prepare the project for compilation"
     },
+    "publish": {
+      "name": "publish",
+      "steps": [
+        {
+          "exec": "node scripts/npm-publish-codeartifact.js"
+        }
+      ]
+    },
+    "reinistall": {
+      "name": "reinistall",
+      "steps": [
+        {
+          "exec": "rm -fr node_modules package-lock.json dist coverage test-reports lib"
+        }
+      ]
+    },
     "release": {
       "name": "release",
       "description": "Prepare a release from \"main\" branch",
       "env": {
-        "RELEASE": "true"
+        "RELEASE": "true",
+        "MAJOR": "2"
       },
       "steps": [
         {
@@ -292,7 +308,7 @@
           "exec": "npm install"
         },
         {
-          "exec": "npm update @jest/globals @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser commit-and-tag-version eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii json-schema projen ts-jest ts-node typescript aws-cdk-lib constructs"
+          "exec": "npm update @jest/globals @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser commit-and-tag-version eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint glob-promise glob jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii json-schema projen ts-jest ts-node typescript aws-cdk-lib constructs"
         },
         {
           "exec": "npx projen"

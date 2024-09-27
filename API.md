@@ -1,67 +1,236 @@
-# API Reference
+# API Reference <a name="API Reference" id="api-reference"></a>
 
-**Classes**
+## Constructs <a name="Constructs" id="Constructs"></a>
 
-Name|Description
-----|-----------
-[UserPoolIdentityProviderGithub](#cdk-user-pool-identity-provider-github-userpoolidentityprovidergithub)|GitHub OpenID Connect Wrapper for Cognito.
-
-
-**Interfaces**
-
-Name|Description
-----|-----------
-[IUserPoolIdentityProviderGithubProps](#cdk-user-pool-identity-provider-github-iuserpoolidentityprovidergithubprops)|*No description*
-
-
-
-## class UserPoolIdentityProviderGithub  <a id="cdk-user-pool-identity-provider-github-userpoolidentityprovidergithub"></a>
+### UserPoolIdentityProviderGithub <a name="UserPoolIdentityProviderGithub" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub"></a>
 
 GitHub OpenID Connect Wrapper for Cognito.
 
-__Implements__: [IConstruct](#constructs-iconstruct), [IConstruct](#aws-cdk-core-iconstruct), [IConstruct](#constructs-iconstruct), [IDependable](#aws-cdk-core-idependable)
-__Extends__: [Construct](#aws-cdk-core-construct)
+*Example*
 
-### Initializer
+```typescript
+new UserPoolIdentityProviderGithub(this, 'UserPoolIdentityProviderGithub', {
+  userPool: new UserPool(stack, 'UserPool'),
+  clientId: 'myClientId',
+  clientSeret: 'myClientSecret',
+  cognitoHostedUiDomain: 'https://auth.domain.com',
+});
+```
 
 
+#### Initializers <a name="Initializers" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.Initializer"></a>
 
+```typescript
+import { UserPoolIdentityProviderGithub } from 'cdk-user-pool-identity-provider-github'
 
-```ts
 new UserPoolIdentityProviderGithub(scope: Construct, id: string, props: IUserPoolIdentityProviderGithubProps)
 ```
 
-* **scope** (<code>[Construct](#aws-cdk-core-construct)</code>)  *No description*
-* **id** (<code>string</code>)  *No description*
-* **props** (<code>[IUserPoolIdentityProviderGithubProps](#cdk-user-pool-identity-provider-github-iuserpoolidentityprovidergithubprops)</code>)  *No description*
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.Initializer.parameter.scope">scope</a></code> | <code>constructs.Construct</code> | *No description.* |
+| <code><a href="#cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.Initializer.parameter.id">id</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.Initializer.parameter.props">props</a></code> | <code><a href="#cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps">IUserPoolIdentityProviderGithubProps</a></code> | *No description.* |
+
+---
+
+##### `scope`<sup>Required</sup> <a name="scope" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.Initializer.parameter.scope"></a>
+
+- *Type:* constructs.Construct
+
+---
+
+##### `id`<sup>Required</sup> <a name="id" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.Initializer.parameter.id"></a>
+
+- *Type:* string
+
+---
+
+##### `props`<sup>Required</sup> <a name="props" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.Initializer.parameter.props"></a>
+
+- *Type:* <a href="#cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps">IUserPoolIdentityProviderGithubProps</a>
+
+---
+
+#### Methods <a name="Methods" id="Methods"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.toString">toString</a></code> | Returns a string representation of this construct. |
+
+---
+
+##### `toString` <a name="toString" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.toString"></a>
+
+```typescript
+public toString(): string
+```
+
+Returns a string representation of this construct.
+
+#### Static Functions <a name="Static Functions" id="Static Functions"></a>
+
+| **Name** | **Description** |
+| --- | --- |
+| <code><a href="#cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.isConstruct">isConstruct</a></code> | Checks if `x` is a construct. |
+
+---
+
+##### `isConstruct` <a name="isConstruct" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.isConstruct"></a>
+
+```typescript
+import { UserPoolIdentityProviderGithub } from 'cdk-user-pool-identity-provider-github'
+
+UserPoolIdentityProviderGithub.isConstruct(x: any)
+```
+
+Checks if `x` is a construct.
+
+Use this method instead of `instanceof` to properly detect `Construct`
+instances, even when the construct library is symlinked.
+
+Explanation: in JavaScript, multiple copies of the `constructs` library on
+disk are seen as independent, completely different libraries. As a
+consequence, the class `Construct` in each copy of the `constructs` library
+is seen as a different class, and an instance of one class will not test as
+`instanceof` the other class. `npm install` will not create installations
+like this, but users may manually symlink construct libraries together or
+use a monorepo tool: in those cases, multiple copies of the `constructs`
+library can be accidentally installed, and `instanceof` will behave
+unpredictably. It is safest to avoid using `instanceof`, and using
+this type-testing method instead.
+
+###### `x`<sup>Required</sup> <a name="x" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.isConstruct.parameter.x"></a>
+
+- *Type:* any
+
+Any object.
+
+---
+
+#### Properties <a name="Properties" id="Properties"></a>
+
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.property.userPoolIdentityProvider">userPoolIdentityProvider</a></code> | <code>aws-cdk-lib.aws_cognito.CfnUserPoolIdentityProvider</code> | *No description.* |
+
+---
+
+##### `node`<sup>Required</sup> <a name="node" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.property.node"></a>
+
+```typescript
+public readonly node: Node;
+```
+
+- *Type:* constructs.Node
+
+The tree node.
+
+---
+
+##### `userPoolIdentityProvider`<sup>Required</sup> <a name="userPoolIdentityProvider" id="cdk-user-pool-identity-provider-github.UserPoolIdentityProviderGithub.property.userPoolIdentityProvider"></a>
+
+```typescript
+public readonly userPoolIdentityProvider: CfnUserPoolIdentityProvider;
+```
+
+- *Type:* aws-cdk-lib.aws_cognito.CfnUserPoolIdentityProvider
+
+---
 
 
 
-### Properties
+
+## Protocols <a name="Protocols" id="Protocols"></a>
+
+### IUserPoolIdentityProviderGithubProps <a name="IUserPoolIdentityProviderGithubProps" id="cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps"></a>
+
+- *Implemented By:* <a href="#cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps">IUserPoolIdentityProviderGithubProps</a>
 
 
-Name | Type | Description 
------|------|-------------
-**userPoolIdentityProvider** | <code>[CfnUserPoolIdentityProvider](#aws-cdk-aws-cognito-cfnuserpoolidentityprovider)</code> | <span></span>
+#### Properties <a name="Properties" id="Properties"></a>
 
+| **Name** | **Type** | **Description** |
+| --- | --- | --- |
+| <code><a href="#cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientId">clientId</a></code> | <code>string</code> | The client id recognized by Github APIs. |
+| <code><a href="#cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientSecret">clientSecret</a></code> | <code>string</code> | The client secret to be accompanied with clientId for Github APIs to authenticate the client. |
+| <code><a href="#cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.cognitoHostedUiDomain">cognitoHostedUiDomain</a></code> | <code>string</code> | The Cognito hosted UI domain. |
+| <code><a href="#cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.userPool">userPool</a></code> | <code>aws-cdk-lib.aws_cognito.UserPool</code> | The user pool. |
+| <code><a href="#cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitBranch">gitBranch</a></code> | <code>string</code> | The branch of ther Git repository to clone for the GitHub wrapper. |
+| <code><a href="#cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitUrl">gitUrl</a></code> | <code>string</code> | The URL of the Git repository for the GitHub wrapper. |
 
+---
 
-## interface IUserPoolIdentityProviderGithubProps  <a id="cdk-user-pool-identity-provider-github-iuserpoolidentityprovidergithubprops"></a>
+##### `clientId`<sup>Required</sup> <a name="clientId" id="cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientId"></a>
 
+```typescript
+public readonly clientId: string;
+```
 
+- *Type:* string
 
+The client id recognized by Github APIs.
 
-### Properties
+---
 
+##### `clientSecret`<sup>Required</sup> <a name="clientSecret" id="cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientSecret"></a>
 
-Name | Type | Description 
------|------|-------------
-**clientId** | <code>string</code> | The client id recognized by Github APIs.
-**clientSecret** | <code>string</code> | The client secret to be accompanied with clientId for Github APIs to authenticate the client.
-**cognitoHostedUiDomain** | <code>string</code> | The Cognito hosted UI domain.
-**userPool** | <code>[UserPool](#aws-cdk-aws-cognito-userpool)</code> | The user pool.
-**gitBranch**? | <code>string</code> | The branch of ther Git repository to clone for the GitHub wrapper.<br/>__*Optional*__
-**gitUrl**? | <code>string</code> | The URL of the Git repository for the GitHub wrapper.<br/>__*Optional*__
+```typescript
+public readonly clientSecret: string;
+```
 
+- *Type:* string
 
+The client secret to be accompanied with clientId for Github APIs to authenticate the client.
+
+---
+
+##### `cognitoHostedUiDomain`<sup>Required</sup> <a name="cognitoHostedUiDomain" id="cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.cognitoHostedUiDomain"></a>
+
+```typescript
+public readonly cognitoHostedUiDomain: string;
+```
+
+- *Type:* string
+
+The Cognito hosted UI domain.
+
+---
+
+##### `userPool`<sup>Required</sup> <a name="userPool" id="cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.userPool"></a>
+
+```typescript
+public readonly userPool: UserPool;
+```
+
+- *Type:* aws-cdk-lib.aws_cognito.UserPool
+
+The user pool.
+
+---
+
+##### `gitBranch`<sup>Optional</sup> <a name="gitBranch" id="cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitBranch"></a>
+
+```typescript
+public readonly gitBranch: string;
+```
+
+- *Type:* string
+
+The branch of ther Git repository to clone for the GitHub wrapper.
+
+---
+
+##### `gitUrl`<sup>Optional</sup> <a name="gitUrl" id="cdk-user-pool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitUrl"></a>
+
+```typescript
+public readonly gitUrl: string;
+```
+
+- *Type:* string
+
+The URL of the Git repository for the GitHub wrapper.
+
+---
 

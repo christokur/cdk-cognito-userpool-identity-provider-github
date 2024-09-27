@@ -12,7 +12,6 @@ description = "A CDK construct that adds GitHub as an identity provider to a Cog
 authors = ["Christo De Lange <christo.delange@sands.com>"]
 license = "(c) 2024 DLDInternet LLC"
 readme = "README.md"
-package-mode = false
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
@@ -27,7 +26,7 @@ keywords = [ "devops","gitops",]
 exclude = [
     ".bumpversion.cfg",
 ]
-
+package-mode = false
 
 [tool.poetry.urls]
 Homepage = "https://github.com/SandsB2B/cdk-user-pool-identity-provider-github"
@@ -41,11 +40,6 @@ url = "https://artifacts-433714148419.d.codeartifact.us-east-2.amazonaws.com/pyp
 
 [[tool.poetry.source]]
 name = "pypi"
-priority = "supplemental"
-
-[[tool.poetry.source]]
-name = "assets"
-url = "https://artifacts-433714148419.d.codeartifact.us-east-2.amazonaws.com/assets/pypi/simple/"
 priority = "supplemental"
 
 [tool.poetry.build]

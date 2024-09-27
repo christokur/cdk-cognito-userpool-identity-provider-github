@@ -1,7 +1,7 @@
 {
   "template": "git@github.com:SandsB2B/cookiecutter-project-docs.git",
-  "commit": "5c53ffb0dd09455fbabe6a499711f673c0babcaf",
-  "checkout": "v0.23.3",
+  "commit": "9d07945aa8fb7d1c7bf836dcf67e70ad3f6b5137",
+  "checkout": "v0.23.5",
   "context": {
     "cookiecutter": {
       "authors": "",
@@ -86,9 +86,9 @@
       "ruff_extend_exclude": "",
       "ruff_ignore": "",
       "_extensions": [
+        "toolbag.utils.template_expander.extensions.ExpandCookiecutterTemplateExtension",
         "toolbag.utils.template_expander.extensions.PythonExtension",
-        "toolbag.utils.template_expander.extensions.python_extension.PythonExtension",
-        "toolbag.utils.template_expander.extensions.ExpandCookiecutterTemplateExtension"
+        "toolbag.utils.template_expander.extensions.python_extension.PythonExtension"
       ],
       "_notes": {
         "lists": "Lists have a special meaning for Cookiecutter so we are forced to wrap them in a map or express as a CSV string and split in the template.",
@@ -115,7 +115,7 @@
         "gitlint": "{ version = '~0.19.1' }",
         "isort": "{ version = '~5.13.2' }",
         "pre-commit": "{ version = '~2.21.0' }",
-        "prompt-toolkit": "{{cookiecutter.prompt_toolkit_version}}",
+        "prompt-toolkit": "~3.0.38",
         "pyproject-fmt": "{ version = '~1.8.0' }",
         "python-toolbag": ">=0.23.32",
         "ruff": ">=0.3.0",
