@@ -131,7 +131,7 @@ project.addTask('reinistall', {
 project.addTask('publish', {
   exec: 'node scripts/npm-publish-codeartifact.js',
   env: {
-    "AWS_PROFILE": "cloud-services-prod",
+    AWS_PROFILE: 'cloud-services-prod',
   },
 });
 
