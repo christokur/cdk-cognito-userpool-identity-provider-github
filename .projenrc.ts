@@ -134,7 +134,7 @@ project.addTask('publish', {
 
 // The Dockerfile isn't interpreted by TypeScript
 // We need to copy it manually
-project.compileTask.exec('cp src/Dockerfile lib/');
+project.postCompileTask.exec('cp src/Dockerfile lib/');
 
 // Add a custom compilation step
 project.compileTask.reset('tsc && jsii --silence-warnings=reserved-word');
