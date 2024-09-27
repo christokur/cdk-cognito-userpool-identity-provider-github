@@ -14,11 +14,11 @@ const project = new AwsCdkConstructLibrary({
   projenrcTs: true,
   packageManager: NodePackageManager.NPM,
   gitignore: ['/.aider*'],
-
-  majorVersion: 2,
-  minorVersion: 0,
-  releaseToNpm: true,
-  releaseWorkflow: true,
+  version: '2.0.0', // Updated version
+  //majorVersion: 2,
+  //minorVersion: 0,
+  releaseToNpm: false,
+  releaseWorkflow: false,
 
   // Node.js requirements
   minNodeVersion: '18.0.0',

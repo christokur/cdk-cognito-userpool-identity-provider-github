@@ -11,7 +11,6 @@
   },
   "scripts": {
     "build": "npx projen build",
-    "bump": "npx projen bump",
     "clean": "npx projen clean",
     "clobber": "npx projen clobber",
     "compat": "npx projen compat",
@@ -28,11 +27,9 @@
     "pre-compile": "npx projen pre-compile",
     "publish": "npx projen publish",
     "reinistall": "npx projen reinistall",
-    "release": "npx projen release",
     "test": "npx projen test",
     "test:debug": "npx projen test:debug",
     "test:watch": "npx projen test:watch",
-    "unbump": "npx projen unbump",
     "upgrade": "npx projen upgrade",
     "watch": "npx projen watch",
     "projen": "npx projen"
@@ -48,7 +45,6 @@
     "@types/node": "^18 <= 18.11.19",
     "@typescript-eslint/eslint-plugin": "^7",
     "@typescript-eslint/parser": "^7",
-    "commit-and-tag-version": "^12",
     "eslint": "^8",
     "eslint-import-resolver-node": "^0.3.6",
     "eslint-import-resolver-typescript": "^2.5.0",
@@ -91,7 +87,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "0.0.0",
+  "version": "2.0.0",
   "jest": {
     "coverageProvider": "v8",
     "verbose": true,
