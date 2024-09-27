@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /* eslint-env node */
-import { execSync } from 'child_process';
-import fs from 'fs';
-import path from 'path';
+const { execSync } = require('child_process');
+const fs = require('fs');
+const path = require('path');
 
 // Tell ESLint that we're using Node.js globals
 /* global process */
@@ -12,7 +12,7 @@ import path from 'path';
 const AWS_REGION_TOOLS = process.env.AWS_REGION_TOOLS || 'us-east-2';
 const AWS_ACCOUNT_TOOLS = process.env.AWS_ACCOUNT_TOOLS || '433714148419';
 const PYTHON_KEYRING_BACKEND = process.env.PYTHON_KEYRING_BACKEND || 'keyring.backends.null.Keyring';
-const NPM_REPOSITORY_NAME = process.env.NPM_REPOSITORY_NAME || 'clients';
+const NPM_REPOSITORY_NAME = process.env.NPM_REPOSITORY_NAME || 'npm';
 const NODE_ENV = process.env.NODE_ENV || 'production';
 const BUILD_TYPE = process.env.BUILD_TYPE || 'release';
 const GITHUB_WORKSPACE = process.env.GITHUB_WORKSPACE || '.';

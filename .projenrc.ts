@@ -6,7 +6,7 @@ const project = new AwsCdkConstructLibrary({
   authorAddress: 'sands@christodelange.com',
   cdkVersion: '2.100.0',
   defaultReleaseBranch: 'main',
-  name: 'cdk-user-pool-identity-provider-github',
+  name: 'cdk-cognito-userpool-identity-provider-github',
   description: 'A CDK construct that adds GitHub as an identity provider to a Cognito user pool',
   repositoryUrl: 'git@github.com:christokur/cdk-user-pool-identity-provider-github.git',
   license: 'Apache-2.0',
