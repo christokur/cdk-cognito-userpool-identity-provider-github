@@ -31,6 +31,16 @@ jspm_packages/
 .yarn-integrity
 .cache
 /.aider*
+/.jsii
+/dist
+/.projenrc.js
+/.vscode
+/.idea
+/coverage
+/cdk.out
+/test-reports
+/node_modules
+/.DS_Store
 /test-reports/
 junit.xml
 /coverage/

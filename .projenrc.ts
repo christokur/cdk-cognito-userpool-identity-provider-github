@@ -13,7 +13,7 @@ const project = new AwsCdkConstructLibrary({
   keywords: ['cdk'],
   projenrcTs: true,
   packageManager: NodePackageManager.NPM,
-  gitignore: ['/.aider*'],
+  gitignore: ['/.aider*', '/.jsii', '/dist', '/lib', '/.projenrc.js', '/.vscode', '/.idea', '/coverage', '/cdk.out', '/test-reports', '/node_modules', '/.DS_Store'],
   version: '2.0.0', // Updated version
   //majorVersion: 2,
   //minorVersion: 0,
