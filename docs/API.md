@@ -12,7 +12,7 @@ GitHub OpenID Connect Wrapper for Cognito.
 new UserPoolIdentityProviderGithub(this, 'UserPoolIdentityProviderGithub', {
   userPool: new UserPool(stack, 'UserPool'),
   clientId: 'myClientId',
-  clientSeret: 'myClientSecret',
+  clientSecret: 'myClientSecret',
   cognitoHostedUiDomain: 'https://auth.domain.com',
 });
 ```
@@ -157,7 +157,7 @@ public readonly userPoolIdentityProvider: CfnUserPoolIdentityProvider;
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientSecret">clientSecret</a></code> | <code>string</code> | The client secret to be accompanied with clientId for Github APIs to authenticate the client. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.cognitoHostedUiDomain">cognitoHostedUiDomain</a></code> | <code>string</code> | The Cognito hosted UI domain. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.userPool">userPool</a></code> | <code>aws-cdk-lib.aws_cognito.UserPool</code> | The user pool. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitBranch">gitBranch</a></code> | <code>string</code> | The branch of ther Git repository to clone for the GitHub wrapper. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitBranch">gitBranch</a></code> | <code>string</code> | The branch of the Git repository to clone for the GitHub wrapper. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitUrl">gitUrl</a></code> | <code>string</code> | The URL of the Git repository for the GitHub wrapper. |
 
 ---
@@ -218,7 +218,7 @@ public readonly gitBranch: string;
 
 - *Type:* string
 
-The branch of ther Git repository to clone for the GitHub wrapper.
+The branch of the Git repository to clone for the GitHub wrapper.
 
 ---
 

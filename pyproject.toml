@@ -7,7 +7,7 @@ requires = [
 
 [tool.poetry]
 name = "cdk-user-pool-identity-provider-github"
-version = "2.0.0"
+version = "2.1.0"
 description = "A CDK construct that adds GitHub as an identity provider to a Cognito user pool"
 authors = ["Christo De Lange <christo.delange@sands.com>"]
 license = "(c) 2024 DLDInternet LLC"
@@ -27,6 +27,7 @@ exclude = [
     ".bumpversion.cfg",
 ]
 package-mode = false
+
 
 [tool.poetry.urls]
 Homepage = "https://github.com/SandsB2B/cdk-user-pool-identity-provider-github"
@@ -74,8 +75,9 @@ optional = true
 
 [tool.poetry.group.local-dev.dependencies]
 black = { version = '~24.2.0', extras = ['d']}
+browser-use = ">=0.1.6"
 bump2version = "~1.0.2-beta6"
-commitizen = { version = '~2.42.1' }
+commitizen = { version = '>=2.42.1' }
 cruft = "2.12.0post17"
 gitlint = { version = '~0.19.1' }
 isort = { version = '~5.13.2' }
@@ -163,7 +165,7 @@ target-version = "py311"
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Allow autofix for all enabled rules (when `--fix`) is provided.
 fixable = ["A", "ANN", "ARG", "B", "BLE", "C", "COM", "D", "DTZ", "E", "EM", "ERA", "EXE", "F", "FBT", "G", "I", "ICN", "INP", "ISC", "N", "PD", "PGH", "PIE", "PL", "PT", "PTH", "Q", "RET", "RUF", "S", "SIM", "T", "TCH", "TID", "TRY", "UP", "W", "YTT"]
-ignore = [ "ANN002", "ANN003", "ANN101", "D211","D213", "S101", "T20", "EM101", "EM102", "ERA001", "D417", "BLE001", "RET504", "UP038", "D212", "D407" ]
+ignore = [ "ANN002", "ANN003", "D211", "D213", "S101", "T20", "EM101", "EM102", "ERA001", "D417", "BLE001", "RET504", "UP038", "D212", "D407" ]
 per-file-ignores = {}
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
 # "FBT", "TRY",
@@ -248,7 +250,7 @@ format = { shell = "black --check --diff ." }
 add = { shell = "git add -A" }
 ibtl = { sequence = ["isort", "black", "tests", "lint"] }
 doctests = { shell = "[ -z 'src' ] || { poetry run pytest --doctest-modules --verbose src }", help = "doctest's" }
-deps = { shell = "poetry install --with local-dev,test,docs", help = "Install project dependencies" }
+deps = { shell = "bash -c 'poetry env info; poetry install --with local-dev,test,docs'", help = "Install project dependencies" }
 prepare = { sequence = ["locks", "deps", "formats", "tests", "gcl", "docs-make", "add", "hooks"], help = "Do things to prepare for release" }
 docs-make = { shell = "make docs || true" }
 docs-build = { shell = "[ -z 'srcsite' ] || { rm -fr site || true; PYTHONPATH=src poetry run portray as_html; }" }
@@ -317,7 +319,7 @@ args = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "2.0.0"
+version = "2.1.0"
 version_files = [
     ".bumpversion.cfg",
     "VERSION",

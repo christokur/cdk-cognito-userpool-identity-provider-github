@@ -1,7 +1,7 @@
 {
   "template": "git@github.com:SandsB2B/cookiecutter-project-docs.git",
-  "commit": "9d07945aa8fb7d1c7bf836dcf67e70ad3f6b5137",
-  "checkout": "v0.23.5",
+  "commit": "b53abbeba32dceef183951d7888c02705c6afa8b",
+  "checkout": "v0.24.7",
   "context": {
     "cookiecutter": {
       "authors": "",
@@ -13,7 +13,7 @@
       "description": "A CDK construct that adds GitHub as an identity provider to a Cognito user pool",
       "license_text": "(c) 2024 DLDInternet LLC",
       "readme": "README.md",
-      "version": "2.0.0",
+      "version": "2.1.0",
       "package_name": "cdk_user_pool_identity_provider_github",
       "packager": "poetry",
       "dynamic": "",
@@ -63,6 +63,7 @@
       "pre_commit_eof_fixer_excludes": "",
       "pre_commit_whitespace_fixer_excludes": "",
       "pre_commit_fail_fast": "true",
+      "poetry_package_mode": "false",
       "poetry_keywords": "devops,gitops",
       "poetry_include": "",
       "poetry_exclude": ".bumpversion.cfg",
@@ -82,6 +83,7 @@
       "gh_pages_branches": "main,master,develop",
       "gh_build_branches": "\"*\"",
       "gh_matrix_os": "ubuntu-latest",
+      "gh_aws_oidc_role_name": "github-codeartifact-readonly",
       "pytest_doctest_option": "--doctest-modules",
       "ruff_extend_exclude": "",
       "ruff_ignore": "",
@@ -110,7 +112,7 @@
       "poetry_localdev_dependencies": {
         "black": "{ version = '~24.2.0', extras = ['d']}",
         "bump2version": "~1.0.2-beta6",
-        "commitizen": "{ version = '~2.42.1' }",
+        "commitizen": "{ version = '>=2.42.1' }",
         "cruft": "2.12.0post17",
         "gitlint": "{ version = '~0.19.1' }",
         "isort": "{ version = '~5.13.2' }",
@@ -119,7 +121,8 @@
         "pyproject-fmt": "{ version = '~1.8.0' }",
         "python-toolbag": ">=0.23.32",
         "ruff": ">=0.3.0",
-        "semver": ">=3.0.0,<4.0.0"
+        "semver": ">=3.0.0,<4.0.0",
+        "browser-use": ">=0.1.6"
       },
       "poetry_docs_dependencies": {
         "pymdown-extensions": ">=10.0"
@@ -132,12 +135,7 @@
         "pytest-datadir": "~1.5.0",
         "pytest-stub": "~1.1.0"
       },
-      "poetry_package_mode": {
-        "enabled": "true"
-      },
-      "poetry_settings": {
-        "package-mode": "false"
-      },
+      "poetry_settings": {},
       "poetry_extras": {},
       "poetry_packages": {},
       "poetry_plugins": {},

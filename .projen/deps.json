@@ -2,32 +2,35 @@
   "dependencies": [
     {
       "name": "@jest/globals",
-      "version": "^29",
+      "version": "^29.7.0",
       "type": "build"
     },
     {
       "name": "@types/jest",
-      "version": "^27",
+      "version": "^29",
       "type": "build"
     },
     {
       "name": "@types/node",
-      "version": "^18 <= 18.11.19",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/eslint-plugin",
-      "version": "^7",
+      "version": "^8",
       "type": "build"
     },
     {
       "name": "@typescript-eslint/parser",
-      "version": "^7",
+      "version": "^8",
       "type": "build"
     },
     {
-      "name": "eslint-import-resolver-node",
-      "version": "^0.3.6",
+      "name": "aws-cdk-lib",
+      "version": "2.171.1",
+      "type": "build"
+    },
+    {
+      "name": "eslint-config-prettier",
       "type": "build"
     },
     {
@@ -39,18 +42,12 @@
       "type": "build"
     },
     {
+      "name": "eslint-plugin-prettier",
+      "type": "build"
+    },
+    {
       "name": "eslint",
-      "version": "^8",
-      "type": "build"
-    },
-    {
-      "name": "glob-promise",
-      "version": "^6.0.2",
-      "type": "build"
-    },
-    {
-      "name": "glob",
-      "version": "^8.1.0",
+      "version": "^9",
       "type": "build"
     },
     {
@@ -60,7 +57,7 @@
     },
     {
       "name": "jest",
-      "version": "^27",
+      "version": "^29",
       "type": "build"
     },
     {
@@ -78,17 +75,16 @@
     },
     {
       "name": "jsii-rosetta",
-      "version": "~5.5.0",
+      "version": "5.6.0",
       "type": "build"
     },
     {
       "name": "jsii",
-      "version": "~5.5.0",
+      "version": "5.6.0",
       "type": "build"
     },
     {
-      "name": "json-schema",
-      "version": "^0.4.0",
+      "name": "prettier",
       "type": "build"
     },
     {
@@ -97,7 +93,7 @@
     },
     {
       "name": "ts-jest",
-      "version": "^27",
+      "version": "^29",
       "type": "build"
     },
     {
@@ -106,22 +102,11 @@
     },
     {
       "name": "typescript",
-      "version": "~5.3.3",
       "type": "build"
     },
     {
-      "name": "@types/babel__traverse",
-      "version": "7.18.2",
-      "type": "override"
-    },
-    {
-      "name": "@types/prettier",
-      "version": "2.6.0",
-      "type": "override"
-    },
-    {
       "name": "aws-cdk-lib",
-      "version": "^2.100.0",
+      "version": "^2.171.1",
       "type": "peer"
     },
     {
@@ -131,12 +116,12 @@
     },
     {
       "name": "aws-cdk-lib",
-      "version": "2.100.0",
+      "version": "2.171.1",
       "type": "runtime"
     },
     {
       "name": "constructs",
-      "version": "^10.0.5",
+      "version": "10.4.2",
       "type": "runtime"
     }
   ],

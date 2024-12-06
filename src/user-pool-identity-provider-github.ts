@@ -1,33 +1,25 @@
-import { Duration } from 'aws-cdk-lib';
-import { LambdaIntegration, RestApi } from 'aws-cdk-lib/aws-apigateway';
-import { CfnUserPoolIdentityProvider, UserPool } from 'aws-cdk-lib/aws-cognito';
-import { Code, Function, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { Construct } from 'constructs';
+import { Duration } from "aws-cdk-lib";
+import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
+import { CfnUserPoolIdentityProvider, UserPool } from "aws-cdk-lib/aws-cognito";
+import {
+  Code,
+  Function as LambdaFunction,
+  Runtime,
+} from "aws-cdk-lib/aws-lambda";
+import { Construct } from "constructs";
 
 export interface IUserPoolIdentityProviderGithubProps {
-  /**
-   * The user pool.
-   */
+  /** The user pool */
   userPool: UserPool;
-  /**
-   * The client id recognized by Github APIs.
-   */
+  /** The client id recognized by Github APIs */
   clientId: string;
-  /**
-   * The client secret to be accompanied with clientId for Github APIs to authenticate the client.
-   */
+  /** The client secret to be accompanied with clientId for Github APIs to authenticate the client */
   clientSecret: string;
-  /**
-   * The Cognito hosted UI domain.
-   */
+  /** The Cognito hosted UI domain */
   cognitoHostedUiDomain: string;
-  /**
-   * The URL of the Git repository for the GitHub wrapper
-   */
+  /** The URL of the Git repository for the GitHub wrapper */
   gitUrl?: string;
-  /**
-   * The branch of ther Git repository to clone for the GitHub wrapper
-   */
+  /** The branch of the Git repository to clone for the GitHub wrapper */
   gitBranch?: string;
 }
 
@@ -39,12 +31,12 @@ export interface IUserPoolIdentityProviderGithubProps {
  * new UserPoolIdentityProviderGithub(this, 'UserPoolIdentityProviderGithub', {
  *   userPool: new UserPool(stack, 'UserPool'),
  *   clientId: 'myClientId',
- *   clientSeret: 'myClientSecret',
+ *   clientSecret: 'myClientSecret',
  *   cognitoHostedUiDomain: 'https://auth.domain.com',
  * });
  */
 export class UserPoolIdentityProviderGithub extends Construct {
-  public userPoolIdentityProvider: CfnUserPoolIdentityProvider;
+  public readonly userPoolIdentityProvider: CfnUserPoolIdentityProvider;
 
   constructor(
     scope: Construct,
@@ -53,121 +45,66 @@ export class UserPoolIdentityProviderGithub extends Construct {
   ) {
     super(scope, id);
 
-    const api = new RestApi(this, 'RestApi');
+    const api = new RestApi(this, "RestApi");
 
-    const wellKnownResource = api.root.addResource('.well-known');
-
-    const commonFunctionProps = {
-      code: Code.fromDockerBuild(__dirname, {
-        buildArgs: {
-          GIT_URL: props.gitUrl ?? 'https://github.com/christokur/github-cognito-openid-wrapper',
-          GIT_BRANCH: props.gitBranch ?? 'master',
-        },
-      }),
-      environment: {
-        GITHUB_CLIENT_ID: props.clientId,
-        GITHUB_CLIENT_SECRET: props.clientSecret,
-        COGNITO_REDIRECT_URI: `${props.cognitoHostedUiDomain}/oauth2/idpresponse`,
-        GITHUB_API_URL: 'https://api.github.com',
-        GITHUB_LOGIN_URL: 'https://github.com',
-      },
-      runtime: Runtime.NODEJS_18_X,
-      timeout: Duration.minutes(15),
-    };
-    const openIdDiscoveryFunction = new Function(
+    const openIdConfigurationFunction = new LambdaFunction(
       this,
-      'OpenIdDiscoveryFunction',
+      "OpenIdConfigurationFunction",
       {
-        ...commonFunctionProps,
-        handler: 'openIdConfiguration.handler',
+        runtime: Runtime.NODEJS_18_X,
+        handler: "openIdConfiguration.handler",
+        code: Code.fromDockerBuild(__dirname, {
+          file: "Dockerfile",
+          buildArgs: {
+            GIT_URL:
+              props.gitUrl ||
+              "https://github.com/christokur/github-cognito-openid-wrapper",
+            GIT_BRANCH: props.gitBranch || "master",
+          },
+        }),
+        environment: {
+          COGNITO_REDIRECT_URI: `${props.cognitoHostedUiDomain}/oauth2/idpresponse`,
+          GITHUB_API_URL: "https://api.github.com",
+          GITHUB_CLIENT_ID: props.clientId,
+          GITHUB_CLIENT_SECRET: props.clientSecret,
+          GITHUB_LOGIN_URL: "https://github.com",
+        },
+        timeout: Duration.seconds(900),
       },
     );
-    const openIdConfigurationResource = wellKnownResource.addResource(
-      'openid-configuration',
-    );
-    openIdConfigurationResource.addMethod(
-      'GET',
-      new LambdaIntegration(openIdDiscoveryFunction),
+
+    api.root.addMethod(
+      "GET",
+      new LambdaIntegration(openIdConfigurationFunction, {
+        proxy: true,
+      }),
     );
 
-    const authorizeFunction = new Function(this, 'AuthorizeFunction', {
-      ...commonFunctionProps,
-      handler: 'authorize.handler',
-    });
-    const authorizeResource = api.root.addResource('authorize');
-    authorizeResource.addMethod(
-      'GET',
-      new LambdaIntegration(authorizeFunction),
-    );
-
-    const tokenFunction = new Function(this, 'TokenFunction', {
-      ...commonFunctionProps,
-      handler: 'token.handler',
-    });
-    const tokenResource = api.root.addResource('token');
-    tokenResource.addMethod(
-      'GET',
-      new LambdaIntegration(tokenFunction),
-    );
-    tokenResource.addMethod(
-      'POST',
-      new LambdaIntegration(tokenFunction),
-    );
-
-    const userInfoFunction = new Function(this, 'UserInfoFunction', {
-      ...commonFunctionProps,
-      handler: 'userinfo.handler',
-    });
-    const userInfoResource = api.root.addResource('userinfo');
-    userInfoResource.addMethod(
-      'GET',
-      new LambdaIntegration(userInfoFunction),
-    );
-    userInfoResource.addMethod(
-      'POST',
-      new LambdaIntegration(userInfoFunction),
-    );
-
-    const jwksFunction = new Function(this, 'JwksFunction', {
-      ...commonFunctionProps,
-      handler: 'jwks.handler',
-    });
-    const jwksJsonResource = wellKnownResource.addResource('jwks.json');
-    jwksJsonResource.addMethod(
-      'GET',
-      new LambdaIntegration(jwksFunction),
+    api.root.addResource("{proxy+}").addMethod(
+      "ANY",
+      new LambdaIntegration(openIdConfigurationFunction, {
+        proxy: true,
+      }),
     );
 
     this.userPoolIdentityProvider = new CfnUserPoolIdentityProvider(
       this,
-      'UserPoolIdentityProviderGithub',
+      "UserPoolIdentityProvider",
       {
-        providerName: 'Github',
+        userPoolId: props.userPool.userPoolId,
+        providerName: "GitHub",
+        providerType: "OIDC",
         providerDetails: {
           client_id: props.clientId,
           client_secret: props.clientSecret,
-          attributes_request_method: 'GET',
+          attributes_request_method: "GET",
           oidc_issuer: api.url,
-          authorize_scopes: 'openid read:user user:email',
-          // For some reason, Cognito is unable to do OpenID Discovery.
-          authorize_url: `${api.url}/authorize`,
-          token_url: `${api.url}/token`,
-          attributes_url: `${api.url}/userinfo`,
-          jwks_uri: `${api.url}/.well-known/jwks.json`,
+          authorize_scopes: "openid read:user user:email",
         },
-        providerType: 'OIDC',
         attributeMapping: {
-          username: 'sub',
-          email: 'email',
-          email_verified: 'email_verified',
-          name: 'name',
-          picture: 'picture',
-          preferred_username: 'preferred_username',
-          profile: 'profile',
-          updated_at: 'updated_at',
-          website: 'website',
+          email: "email",
+          username: "id",
         },
-        userPoolId: props.userPool.userPoolId,
       },
     );
   }

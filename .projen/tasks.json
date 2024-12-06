@@ -28,7 +28,7 @@
       "name": "clean",
       "steps": [
         {
-          "exec": "rm -fr node_modules dist coverage test-reports lib"
+          "exec": "rm -fr node_modules dist coverage test-reports lib package-lock.json package.json .projen .jsii .mergify.yml .eslintrc.json env.txt errors.txt"
         }
       ]
     },
@@ -78,7 +78,23 @@
       "description": "Only compile",
       "steps": [
         {
-          "exec": "tsc && jsii --silence-warnings=reserved-word"
+          "spawn": "patch-tsconfig",
+          "name": "patch tsconfig.json"
+        },
+        {
+          "exec": "tsc",
+          "name": "tsc"
+        },
+        {
+          "exec": "jsii --silence-warnings=reserved-word",
+          "name": "jsii"
+        },
+        {
+          "spawn": "patch-tsconfig",
+          "name": "patch tsconfig.json"
+        },
+        {
+          "exec": "pwd"
         }
       ]
     },
@@ -96,7 +112,7 @@
       "description": "Generate API.md from .jsii manifest",
       "steps": [
         {
-          "exec": "jsii-docgen -o API.md"
+          "exec": "jsii-docgen -o docs/API.md"
         }
       ]
     },
@@ -115,9 +131,12 @@
     "eslint": {
       "name": "eslint",
       "description": "Runs eslint against the codebase",
+      "env": {
+        "ESLINT_USE_FLAT_CONFIG": "false"
+      },
       "steps": [
         {
-          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools projenrc .projenrc.ts"
+          "exec": "eslint --ext .ts,.tsx --fix --no-error-on-unmatched-pattern $@ src test build-tools .projenrc.js projenrc .projenrc.ts"
         }
       ]
     },
@@ -171,10 +190,23 @@
         }
       ]
     },
+    "patch-tsconfig": {
+      "name": "patch-tsconfig",
+      "description": "Patch tsconfig.json to remove charset option",
+      "steps": [
+        {
+          "exec": "node scripts/patch-tsconfig.js"
+        }
+      ]
+    },
     "post-compile": {
       "name": "post-compile",
       "description": "Runs after successful compilation",
       "steps": [
+        {
+          "spawn": "patch-tsconfig",
+          "name": "patch tsconfig.json"
+        },
         {
           "spawn": "docgen"
         },
@@ -192,26 +224,32 @@
       "description": "Prepare the project for compilation",
       "steps": [
         {
-          "exec": "node scripts/update-version.js"
+          "spawn": "patch-tsconfig",
+          "name": "patch tsconfig.json"
         }
       ]
     },
     "publish": {
       "name": "publish",
-      "env": {
-        "AWS_PROFILE": "cloud-services-prod"
-      },
       "steps": [
         {
-          "exec": "node scripts/npm-publish-codeartifact.js"
+          "exec": "test -d dist || npx projen build",
+          "name": "Check dist and build/package if necessary"
+        },
+        {
+          "exec": "node scripts/npm-publish-codeartifact.js",
+          "env": {
+            "AWS_PROFILE": "cloud-services-prod"
+          },
+          "name": "Publish to CodeArtifact"
         }
       ]
     },
-    "reinistall": {
-      "name": "reinistall",
+    "reinstall": {
+      "name": "reinstall",
       "steps": [
         {
-          "exec": "rm -fr node_modules package-lock.json dist coverage test-reports lib"
+          "exec": "rm -fr node_modules package-lock.json dist coverage test-reports lib && npm install"
         }
       ]
     },
@@ -253,13 +291,13 @@
       },
       "steps": [
         {
-          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --dep=dev,peer,prod,optional --filter=eslint-import-resolver-typescript,eslint-plugin-import,jsii-diff,jsii-pacmak,projen,ts-node"
+          "exec": "npx npm-check-updates@16 --upgrade --target=minor --peer --no-deprecated --dep=dev,peer,prod,optional --filter=@types/node,eslint-config-prettier,eslint-import-resolver-typescript,eslint-plugin-import,eslint-plugin-prettier,jsii-diff,jsii-pacmak,prettier,projen,ts-node,typescript"
         },
         {
           "exec": "npm install"
         },
         {
-          "exec": "npm update @jest/globals @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser eslint-import-resolver-node eslint-import-resolver-typescript eslint-plugin-import eslint glob-promise glob jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii json-schema projen ts-jest ts-node typescript aws-cdk-lib constructs"
+          "exec": "npm update @jest/globals @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk-lib eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii prettier projen ts-jest ts-node typescript constructs"
         },
         {
           "exec": "npx projen"
