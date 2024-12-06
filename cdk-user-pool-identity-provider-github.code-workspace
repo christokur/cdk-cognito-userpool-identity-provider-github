@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../github-cognito-openid-wrapper"
+		},
+		{
+			"path": "../../../../../github.com/christokur/ai-tools"
+		}
+	],
+	"settings": {}
+}

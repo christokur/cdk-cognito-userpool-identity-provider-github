@@ -1,6 +1,6 @@
+import * as fs from "fs";
 import { AwsCdkConstructLibrary } from "projen/lib/awscdk";
 import { NodePackageManager } from "projen/lib/javascript";
-import * as fs from 'fs';
 
 // Add custom synthesis hooks
 class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
@@ -53,7 +53,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         "jest-junit@16.0.0",
         "projen@^0.90.6",
         "jsii-rosetta@5.6.0",
-        "@types/node"
+        "@types/node",
       ],
       peerDependencyOptions: {
         pinnedDevDependency: false,
