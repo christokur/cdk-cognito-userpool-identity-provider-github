@@ -125,7 +125,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
         },
         attributeMapping: {
           email: "email",
-          username: "id",
+          username: "login",
         },
       },
     );
