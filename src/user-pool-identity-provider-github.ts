@@ -2,13 +2,21 @@ import { strict as assert } from "assert";
 import * as fs from "fs";
 import * as path from "path";
 import { Duration } from "aws-cdk-lib";
-import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
+import {
+  DomainName,
+  LambdaIntegration,
+  RestApi,
+} from "aws-cdk-lib/aws-apigateway";
+import { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
 import { CfnUserPoolIdentityProvider, UserPool } from "aws-cdk-lib/aws-cognito";
 import {
   Code,
   Function as LambdaFunction,
   Runtime,
 } from "aws-cdk-lib/aws-lambda";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import { IHostedZone } from "aws-cdk-lib/aws-route53";
+import * as targets from "aws-cdk-lib/aws-route53-targets";
 import { Construct } from "constructs";
 
 export interface IUserPoolIdentityProviderGithubProps {
@@ -24,6 +32,12 @@ export interface IUserPoolIdentityProviderGithubProps {
   gitUrl?: string;
   /** The branch of the Git repository to clone for the GitHub wrapper */
   gitBranch?: string;
+  /** The custom domain name for the API Gateway */
+  apiDomainName?: string;
+  /** The certificate for the custom domain */
+  certificate?: ICertificate;
+  /** The hosted zone for the custom domain */
+  hostedZone?: IHostedZone;
 }
 
 /**
@@ -49,6 +63,26 @@ export class UserPoolIdentityProviderGithub extends Construct {
     super(scope, id);
 
     const api = new RestApi(this, "RestApi");
+
+    // Set up custom domain if provided
+    if (props.apiDomainName && props.certificate && props.hostedZone) {
+      const domain = new DomainName(this, "CustomDomain", {
+        domainName: props.apiDomainName,
+        certificate: props.certificate,
+      });
+
+      api.addDomainName("ApiDomain", {
+        domainName: domain.domainName,
+        certificate: props.certificate,
+      });
+
+      // Create DNS record
+      new route53.ARecord(this, "ApiDomainRecord", {
+        zone: props.hostedZone,
+        recordName: props.apiDomainName,
+        target: route53.RecordTarget.fromAlias(new targets.ApiGateway(api)),
+      });
+    }
 
     const homeDir = process.env.HOME || "/root";
     const npmRcPath = path.join(homeDir, ".npmrc");
@@ -109,6 +143,8 @@ export class UserPoolIdentityProviderGithub extends Construct {
       }),
     );
 
+    const apiEndpoint = props.apiDomainName || api.url;
+
     this.userPoolIdentityProvider = new CfnUserPoolIdentityProvider(
       this,
       "UserPoolIdentityProvider",
@@ -120,12 +156,14 @@ export class UserPoolIdentityProviderGithub extends Construct {
           client_id: props.clientId,
           client_secret: props.clientSecret,
           attributes_request_method: "GET",
-          oidc_issuer: api.url,
+          oidc_issuer: apiEndpoint,
           authorize_scopes: "openid read:user user:email",
         },
         attributeMapping: {
-          email: "email",
-          username: "login",
+          email: "email_verified",
+          name: "name",
+          username: "sub",
+          preferredUsername: "preferred_username",
         },
       },
     );
