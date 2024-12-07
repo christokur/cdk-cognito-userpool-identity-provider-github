@@ -47,6 +47,8 @@ jspm_packages/
 .env
 !/tsconfig*
 src/.npmrc
+.yalc
+yalc*
 /test-reports/
 junit.xml
 /coverage/

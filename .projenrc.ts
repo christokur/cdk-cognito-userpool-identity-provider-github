@@ -39,8 +39,10 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         ".env",
         "!/tsconfig*",
         "src/.npmrc",
-      ],
-      jsiiReleaseVersion: "2.1.4",
+        '.yalc',
+        'yalc*',
+          ],
+      jsiiReleaseVersion: "2.1.5",
       nextVersionCommand: "bump2version patch --allow-dirty",
       releaseToNpm: false,
       release: false,
@@ -60,7 +62,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
       peerDependencyOptions: {
         pinnedDevDependency: true,
       },
-      peerDeps: ["aws-cdk-lib", "constructs"],
+      peerDeps: ["aws-cdk-lib@2.171.1", "constructs@10.4.2"],
       jest: true,
       jestOptions: {
         jestVersion: "^29",
