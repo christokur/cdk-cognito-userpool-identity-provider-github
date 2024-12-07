@@ -40,7 +40,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         "!/tsconfig*",
         "src/.npmrc",
       ],
-      jsiiReleaseVersion: "2.1.3",
+      jsiiReleaseVersion: "2.1.4",
       nextVersionCommand: "bump2version patch --allow-dirty",
       releaseToNpm: false,
       release: false,
