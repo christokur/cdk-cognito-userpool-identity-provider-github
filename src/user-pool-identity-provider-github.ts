@@ -1,3 +1,6 @@
+import { strict as assert } from "assert";
+import * as fs from "fs";
+import * as path from "path";
 import { Duration } from "aws-cdk-lib";
 import { LambdaIntegration, RestApi } from "aws-cdk-lib/aws-apigateway";
 import { CfnUserPoolIdentityProvider, UserPool } from "aws-cdk-lib/aws-cognito";
@@ -46,6 +49,25 @@ export class UserPoolIdentityProviderGithub extends Construct {
     super(scope, id);
 
     const api = new RestApi(this, "RestApi");
+
+    const homeDir = process.env.HOME || "/root";
+    const npmRcPath = path.join(homeDir, ".npmrc");
+    if (!fs.existsSync(npmRcPath)) {
+      console.warn(
+        `WARNING: .npmrc file not found in ${homeDir}. You may need to create one or set the "NPM_CONFIG_USERCONFIG" environment variable.`,
+      );
+      process.exit(1);
+    } else {
+      fs.copyFileSync(npmRcPath, `${__dirname}/.npmrc`);
+    }
+    assert(
+      fs.existsSync(`${__dirname}/.npmrc`),
+      ".npmrc not copied to __dirname",
+    );
+    assert(
+      fs.existsSync(`${__dirname}/Dockerfile`),
+      "Dockerfile not found in __dirname",
+    );
 
     const openIdConfigurationFunction = new LambdaFunction(
       this,

@@ -1,6 +1,6 @@
 # UserPoolIdentityProviderGithub CDK construct
 
-Version: 2.1.0
+Version: 2.1.1
 
 This library bundles the [GitHub OpenID Connect Wrapper for Cognito](https://github.com/TimothyJones/github-cognito-openid-wrapper) as a CDK construct, instead of the original SAM implementation.
 
@@ -88,7 +88,7 @@ new ARecord(this, 'CustomDomainAliasRecord', {
   target: RecordTarget.fromAlias({
     bind: () => ({
       hostedZoneId: 'Z2FDTNDATAQYW2', // CloudFront Zone ID
-      dnsName: userPoolDomain.cloudFrontDomainName,
+      dnsName: userPoolDomain.cloudFrontEndpoint,
     }),
   }),
 });

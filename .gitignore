@@ -41,10 +41,12 @@ jspm_packages/
 /node_modules
 /.DS_Store
 /env.txt
+/cmd.txt
 /errors.txt
 /ai
 .env
 !/tsconfig*
+src/.npmrc
 /test-reports/
 junit.xml
 /coverage/

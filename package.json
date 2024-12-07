@@ -69,10 +69,6 @@
     "aws-cdk-lib": "^2.171.1",
     "constructs": "^10.0.5"
   },
-  "dependencies": {
-    "aws-cdk-lib": "2.171.1",
-    "constructs": "10.4.2"
-  },
   "keywords": [
     "cdk"
   ],
@@ -84,7 +80,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "2.1.0",
+  "version": "2.1.1",
   "jest": {
     "coverageProvider": "v8",
     "verbose": true,
