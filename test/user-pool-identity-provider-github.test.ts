@@ -1,8 +1,8 @@
+import { Stack } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
 import { Code } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
-import { Stack } from "aws-cdk-lib/core";
 import { UserPoolIdentityProviderGithub } from "../src";
 
 const clientId = "myClientId";
@@ -168,4 +168,77 @@ test("UserPoolIdentityProviderGithub handles missing HOME env var", () => {
   }).toThrow(/WARNING: .npmrc file not found in \/root/);
 
   process.env.HOME = originalHome;
+});
+
+test("UserPoolIdentityProviderGithub does not create identity provider when createUserPoolIdentityProvider is false", () => {
+  const stack = new Stack();
+  const provider = new UserPoolIdentityProviderGithub(
+    stack,
+    "UserPoolIdentityProviderGithub",
+    {
+      clientId,
+      clientSecret,
+      userPool: new UserPool(stack, "UserPool"),
+      cognitoHostedUiDomain,
+      createUserPoolIdentityProvider: false,
+    },
+  );
+
+  expect(provider.userPoolIdentityProvider).toBeNull();
+  Template.fromStack(stack).hasResourceProperties(
+    "AWS::ApiGateway::RestApi",
+    {},
+  );
+});
+
+test("UserPoolIdentityProviderGithub creates correct API endpoints", () => {
+  const stack = new Stack();
+  new UserPoolIdentityProviderGithub(stack, "UserPoolIdentityProviderGithub", {
+    clientId,
+    clientSecret,
+    userPool: new UserPool(stack, "UserPool"),
+    cognitoHostedUiDomain,
+  });
+
+  const template = Template.fromStack(stack);
+
+  // Root GET method
+  template.hasResourceProperties("AWS::ApiGateway::Method", {
+    HttpMethod: "GET",
+    AuthorizationType: "NONE",
+    Integration: {
+      Type: "AWS_PROXY",
+    },
+  });
+
+  // Proxy ANY method
+  template.hasResourceProperties("AWS::ApiGateway::Method", {
+    HttpMethod: "ANY",
+    AuthorizationType: "NONE",
+    Integration: {
+      Type: "AWS_PROXY",
+    },
+  });
+});
+
+test("UserPoolIdentityProviderGithub sets correct Lambda environment variables", () => {
+  const stack = new Stack();
+  new UserPoolIdentityProviderGithub(stack, "UserPoolIdentityProviderGithub", {
+    clientId,
+    clientSecret,
+    userPool: new UserPool(stack, "UserPool"),
+    cognitoHostedUiDomain,
+  });
+
+  Template.fromStack(stack).hasResourceProperties("AWS::Lambda::Function", {
+    Environment: {
+      Variables: {
+        COGNITO_REDIRECT_URI: `${cognitoHostedUiDomain}/oauth2/idpresponse`,
+        GITHUB_API_URL: "https://api.github.com",
+        GITHUB_CLIENT_ID: clientId,
+        GITHUB_CLIENT_SECRET: clientSecret,
+        GITHUB_LOGIN_URL: "https://github.com",
+      },
+    },
+  });
 });
