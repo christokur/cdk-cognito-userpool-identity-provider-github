@@ -2,6 +2,7 @@ import { strict as assert } from "assert";
 import * as fs from "fs";
 import * as path from "path";
 import { Duration } from "aws-cdk-lib";
+import * as cdk from "aws-cdk-lib";
 import {
   LambdaIntegration,
   RestApi,
@@ -57,6 +58,8 @@ export class UserPoolIdentityProviderGithub extends Construct {
   public readonly userPoolIdentityProvider:
     | CfnUserPoolIdentityProvider
     | undefined;
+  public readonly apiUrl: string = "";
+  public readonly domainName: string = "";
 
   constructor(
     scope: Construct,
@@ -111,6 +114,14 @@ export class UserPoolIdentityProviderGithub extends Construct {
         recordName: props.apiDomainName,
         target: route53.RecordTarget.fromAlias(new targets.ApiGateway(api)),
       });
+      new cdk.CfnOutput(this, "domainName", {
+        value: api.domainName?.domainName || "",
+      });
+      new cdk.CfnOutput(this, "url", { value: api.url || "" });
+
+      // Assign the API URL to the public property
+      this.apiUrl = api.url || "";
+      this.domainName = api.domainName?.domainName || "";
     } else {
       api = new RestApi(this, "RestApi");
     }

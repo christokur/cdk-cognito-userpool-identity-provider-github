@@ -99,6 +99,8 @@ Any object.
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.UserPoolIdentityProviderGithub.property.node">node</a></code> | <code>constructs.Node</code> | The tree node. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.UserPoolIdentityProviderGithub.property.apiUrl">apiUrl</a></code> | <code>string</code> | *No description.* |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.UserPoolIdentityProviderGithub.property.domainName">domainName</a></code> | <code>string</code> | *No description.* |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.UserPoolIdentityProviderGithub.property.userPoolIdentityProvider">userPoolIdentityProvider</a></code> | <code>aws-cdk-lib.aws_cognito.CfnUserPoolIdentityProvider</code> | *No description.* |
 
 ---
@@ -112,6 +114,26 @@ public readonly node: Node;
 - *Type:* constructs.Node
 
 The tree node.
+
+---
+
+##### `apiUrl`<sup>Required</sup> <a name="apiUrl" id="cdk-cognito-userpool-identity-provider-github.UserPoolIdentityProviderGithub.property.apiUrl"></a>
+
+```typescript
+public readonly apiUrl: string;
+```
+
+- *Type:* string
+
+---
+
+##### `domainName`<sup>Required</sup> <a name="domainName" id="cdk-cognito-userpool-identity-provider-github.UserPoolIdentityProviderGithub.property.domainName"></a>
+
+```typescript
+public readonly domainName: string;
+```
+
+- *Type:* string
 
 ---
 
