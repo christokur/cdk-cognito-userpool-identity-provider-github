@@ -245,6 +245,14 @@
         }
       ]
     },
+    "rebuild": {
+      "name": "rebuild",
+      "steps": [
+        {
+          "exec": "rm -fr dist lib && npm run build"
+        }
+      ]
+    },
     "reinstall": {
       "name": "reinstall",
       "steps": [

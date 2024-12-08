@@ -34,7 +34,7 @@ var CognitoGithubProviderProject = /** @class */ (function (_super) {
     __extends(CognitoGithubProviderProject, _super);
     function CognitoGithubProviderProject(options) {
         if (options === void 0) { options = {}; }
-        return _super.call(this, __assign({ author: "Christo De Lange", authorAddress: "sands@christodelange.com", cdkVersion: "2.171.1", defaultReleaseBranch: "main", name: "cdk-cognito-userpool-identity-provider-github", description: "A CDK construct that adds GitHub as an identity provider to a Cognito user pool", repositoryUrl: "git@github.com:christokur/cdk-user-pool-identity-provider-github.git", license: "Apache-2.0", keywords: ["cdk"], projenrcTs: true, packageManager: javascript_1.NodePackageManager.NPM, gitignore: [
+        return _super.call(this, __assign({ author: "Christo De Lange", authorAddress: "sands@christodelange.com", cdkVersion: "2.171.1", defaultReleaseBranch: "main", name: "cdk-cognito-userpool-identity-provider-github", description: "A CDK construct that adds GitHub as an identity provider to a Cognito user pool", repositoryUrl: "git@github.com:christokur/cdk-cognito-userpool-identity-provider-github.git", license: "Apache-2.0", keywords: ["cdk"], projenrcTs: true, packageManager: javascript_1.NodePackageManager.NPM, gitignore: [
                 "/.aider*",
                 "/.jsii",
                 "/dist",

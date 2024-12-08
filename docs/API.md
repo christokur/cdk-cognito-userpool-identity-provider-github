@@ -115,7 +115,7 @@ The tree node.
 
 ---
 
-##### `userPoolIdentityProvider`<sup>Required</sup> <a name="userPoolIdentityProvider" id="cdk-cognito-userpool-identity-provider-github.UserPoolIdentityProviderGithub.property.userPoolIdentityProvider"></a>
+##### `userPoolIdentityProvider`<sup>Optional</sup> <a name="userPoolIdentityProvider" id="cdk-cognito-userpool-identity-provider-github.UserPoolIdentityProviderGithub.property.userPoolIdentityProvider"></a>
 
 ```typescript
 public readonly userPoolIdentityProvider: CfnUserPoolIdentityProvider;
@@ -144,7 +144,7 @@ public readonly userPoolIdentityProvider: CfnUserPoolIdentityProvider;
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.cognitoHostedUiDomain">cognitoHostedUiDomain</a></code> | <code>string</code> | The Cognito hosted UI domain. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.userPool">userPool</a></code> | <code>aws-cdk-lib.aws_cognito.UserPool</code> | The user pool. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.apiDomainName">apiDomainName</a></code> | <code>string</code> | The custom domain name for the API Gateway. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.certificate">certificate</a></code> | <code>aws-cdk-lib.aws_certificatemanager.ICertificate</code> | The certificate for the custom domain. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.createUserPoolIdentityProvider">createUserPoolIdentityProvider</a></code> | <code>boolean</code> | Create the user pool. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitBranch">gitBranch</a></code> | <code>string</code> | The branch of the Git repository to clone for the GitHub wrapper. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitUrl">gitUrl</a></code> | <code>string</code> | The URL of the Git repository for the GitHub wrapper. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | The hosted zone for the custom domain. |
@@ -211,15 +211,15 @@ The custom domain name for the API Gateway.
 
 ---
 
-##### `certificate`<sup>Optional</sup> <a name="certificate" id="cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.certificate"></a>
+##### `createUserPoolIdentityProvider`<sup>Optional</sup> <a name="createUserPoolIdentityProvider" id="cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.createUserPoolIdentityProvider"></a>
 
 ```typescript
-public readonly certificate: ICertificate;
+public readonly createUserPoolIdentityProvider: boolean;
 ```
 
-- *Type:* aws-cdk-lib.aws_certificatemanager.ICertificate
+- *Type:* boolean
 
-The certificate for the custom domain.
+Create the user pool.
 
 ---
 

@@ -36,6 +36,7 @@ test("UserPoolIdentityProviderGithub creates resources", () => {
     clientSecret,
     userPool: new UserPool(stack, "UserPool"),
     cognitoHostedUiDomain,
+    createUserPoolIdentityProvider: true,
   });
 
   const template = Template.fromStack(stack);

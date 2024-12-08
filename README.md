@@ -1,6 +1,6 @@
 # UserPoolIdentityProviderGithub CDK construct
 
-Version: 2.1.7
+Version: 2.2.0
 
 This library bundles the [GitHub OpenID Connect Wrapper for Cognito](https://github.com/TimothyJones/github-cognito-openid-wrapper) as a CDK construct, instead of the original SAM implementation.
 
@@ -19,12 +19,12 @@ If you decide to use this construct, be aware that:
 ### npm
 
 ```bash
-npm install --save cdk-user-pool-identity-provider-github
+npm install --save cdk-cognito-userpool-identity-provider-github
 ```
 
 ### Go, Maven, NuGet, PyPI
 
-Other package managers aren't supported yet, but they could be easily. Let us know your needs by [opening an issue](https://github.com/scenario-labs/cdk-user-pool-identity-provider-github/issues/new).
+Other package managers aren't supported yet, but they could be easily. Let us know your needs by [opening an issue](https://github.com/scenario-labs/cdk-cognito-userpool-identity-provider-github/issues/new).
 
 ## Usage
 
@@ -37,7 +37,7 @@ See [API](./API.md) for a full reference.
 If you already have a user pool with a client and a hosted UI with a custom domain, then you can simply do:
 
 ```ts
-import { UserPoolIdentityProviderGithub } from 'cdk-user-pool-identity-provider-github';
+import { UserPoolIdentityProviderGithub } from 'cdk-cognito-userpool-identity-provider-github';
 
 new UserPoolIdentityProviderGithub(this, 'UserPoolIdentityProviderGithub', {
   userPool: myUserPool,
@@ -59,7 +59,7 @@ The following snippet does the following:
 import { DnsValidatedCertificate } from '@aws-cdk/aws-certificatemanager';
 import { UserPool } from '@aws-cdk/aws-cognito';
 import { ARecord, RecordTarget } from '@aws-cdk/aws-route53';
-import { UserPoolIdentityProviderGithub } from 'cdk-user-pool-identity-provider-github';
+import { UserPoolIdentityProviderGithub } from 'cdk-cognito-userpool-identity-provider-github';
 
 // Parameters
 const userPoolDomainName = 'https://auth.domain.com';

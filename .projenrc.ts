@@ -14,7 +14,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
       description:
         "A CDK construct that adds GitHub as an identity provider to a Cognito user pool",
       repositoryUrl:
-        "git@github.com:christokur/cdk-user-pool-identity-provider-github.git",
+        "git@github.com:christokur/cdk-cognito-userpool-identity-provider-github.git",
       license: "Apache-2.0",
       keywords: ["cdk"],
       projenrcTs: true,
@@ -42,7 +42,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         ".yalc",
         "yalc*",
       ],
-      jsiiReleaseVersion: "2.1.7",
+      jsiiReleaseVersion: "2.2.0",
       nextVersionCommand: "bump2version patch --allow-dirty",
       releaseToNpm: false,
       release: false,
@@ -63,6 +63,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         "eslint-import-resolver-typescript@^3.5.5",
         "eslint-plugin-import@^2.27.5",
         "typescript@~5.6.3",
+        "eslint-plugin-prettier",
       ],
       peerDependencyOptions: {
         pinnedDevDependency: true,
@@ -142,6 +143,10 @@ project.addTask("publish", {
       name: "Publish to CodeArtifact",
     },
   ],
+});
+
+project.addTask("rebuild", {
+  exec: "rm -fr dist lib && npm run build",
 });
 
 project.addTask("repackage", {

@@ -6,8 +6,8 @@ requires = [
 ]
 
 [tool.poetry]
-name = "cdk-user-pool-identity-provider-github"
-version = "2.1.7"
+name = "cdk-cognito-userpool-identity-provider-github"
+version = "2.2.0"
 description = "A CDK construct that adds GitHub as an identity provider to a Cognito user pool"
 authors = ["Christo De Lange <christo.delange@sands.com>"]
 license = "(c) 2024 DLDInternet LLC"
@@ -30,9 +30,9 @@ package-mode = false
 
 
 [tool.poetry.urls]
-Homepage = "https://github.com/SandsB2B/cdk-user-pool-identity-provider-github"
-Documentation = "https://cdk-user-pool-identity-provider-github.docs.infra-area2.com/"
-Changelog = "https://github.com/SandsB2B/cdk-user-pool-identity-provider-github/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/SandsB2B/cdk-cognito-userpool-identity-provider-github"
+Documentation = "https://cdk-cognito-userpool-identity-provider-github.docs.infra-area2.com/"
+Changelog = "https://github.com/SandsB2B/cdk-cognito-userpool-identity-provider-github/blob/main/CHANGELOG.md"
 
 [[tool.poetry.source]]
 name = "codeartifact"
@@ -319,7 +319,7 @@ args = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "2.1.7"
+version = "2.2.0"
 version_files = [
     ".bumpversion.cfg",
     "VERSION",
@@ -353,8 +353,8 @@ extra_markdown_extensions = ["admonition", "codehilite", "extra"]
 [tool.portray.mkdocs]
 site_name = "cdk_user_pool_identity_provider_github"
 site_description = "A CDK construct that adds GitHub as an identity provider to a Cognito user pool"
-site_url = "https://cdk-user-pool-identity-provider-github.docs.infra-area2.com/"
-repo_url = "https://github.com/SandsB2B/cdk-user-pool-identity-provider-github"
+site_url = "https://cdk-cognito-userpool-identity-provider-github.docs.infra-area2.com/"
+repo_url = "https://github.com/SandsB2B/cdk-cognito-userpool-identity-provider-github"
 edit_uri = "edit/master"
 copyright = "(c) 2022 Las Vegas Sands"
 
