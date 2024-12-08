@@ -128,6 +128,25 @@ export class UserPoolIdentityProviderGithub extends Construct {
       this.apiUrl = api.url || "";
     }
 
+    const homeDir = process.env.HOME || "/root";
+    const npmRcPath = path.join(homeDir, ".npmrc");
+    if (!fs.existsSync(npmRcPath)) {
+      throw new Error(
+        `WARNING: .npmrc file not found in ${homeDir}. You may need to create one or set the "NPM_CONFIG_USERCONFIG" environment variable.`,
+      );
+    } else {
+      fs.copyFileSync(npmRcPath, `${__dirname}/.npmrc`);
+      console.log(`Copied .npmrc to ${path.resolve(__dirname, ".npmrc")}`);
+    }
+    assert(
+      fs.existsSync(`${__dirname}/.npmrc`),
+      ".npmrc not copied to __dirname",
+    );
+    assert(
+      fs.existsSync(`${__dirname}/Dockerfile`),
+      "Dockerfile not found in __dirname",
+    );
+
     const openIdConfigurationFunction = new LambdaFunction(
       this,
       "OpenIdConfigurationFunction",
@@ -166,25 +185,6 @@ export class UserPoolIdentityProviderGithub extends Construct {
       new LambdaIntegration(openIdConfigurationFunction, {
         proxy: true,
       }),
-    );
-
-    const homeDir = process.env.HOME || "/root";
-    const npmRcPath = path.join(homeDir, ".npmrc");
-    if (!fs.existsSync(npmRcPath)) {
-      throw new Error(
-        `WARNING: .npmrc file not found in ${homeDir}. You may need to create one or set the "NPM_CONFIG_USERCONFIG" environment variable.`,
-      );
-    } else {
-      fs.copyFileSync(npmRcPath, `${__dirname}/.npmrc`);
-      console.log(`Copied .npmrc to ${path.resolve(__dirname, ".npmrc")}`);
-    }
-    assert(
-      fs.existsSync(`${__dirname}/.npmrc`),
-      ".npmrc not copied to __dirname",
-    );
-    assert(
-      fs.existsSync(`${__dirname}/Dockerfile`),
-      "Dockerfile not found in __dirname",
     );
 
     if (props.createUserPoolIdentityProvider) {
