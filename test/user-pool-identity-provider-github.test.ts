@@ -184,7 +184,7 @@ test("UserPoolIdentityProviderGithub does not create identity provider when crea
     },
   );
 
-  expect(provider.userPoolIdentityProvider).toBeNull();
+  expect(provider.userPoolIdentityProvider).toBeUndefined();
   Template.fromStack(stack).hasResourceProperties(
     "AWS::ApiGateway::RestApi",
     {},

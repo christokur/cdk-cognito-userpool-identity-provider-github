@@ -3,10 +3,10 @@ import * as fs from "fs";
 import * as path from "path";
 import { Duration } from "aws-cdk-lib";
 import {
-  DomainName,
   LambdaIntegration,
   RestApi,
-  BasePathMapping,
+  // DomainName,
+  // BasePathMapping,
 } from "aws-cdk-lib/aws-apigateway";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import { CfnUserPoolIdentityProvider, UserPool } from "aws-cdk-lib/aws-cognito";
@@ -54,7 +54,9 @@ export interface IUserPoolIdentityProviderGithubProps {
  * });
  */
 export class UserPoolIdentityProviderGithub extends Construct {
-  public readonly userPoolIdentityProvider: CfnUserPoolIdentityProvider | null;
+  public readonly userPoolIdentityProvider:
+    | CfnUserPoolIdentityProvider
+    | undefined;
 
   constructor(
     scope: Construct,
@@ -63,7 +65,55 @@ export class UserPoolIdentityProviderGithub extends Construct {
   ) {
     super(scope, id);
 
-    const api = new RestApi(this, "RestApi");
+    let api = undefined;
+
+    // Set up custom domain if provided
+    if (props.apiDomainName && props.hostedZone) {
+      // Create certificate for GitHub API Gateway in the current region
+      const githubApiCertificate = new acm.Certificate(
+        this,
+        "GithubApiCertificate",
+        {
+          domainName: props.apiDomainName,
+          validation: acm.CertificateValidation.fromDns(props.hostedZone),
+        },
+        // Other RestApi properties
+      );
+
+      api = new RestApi(this, "RestApi", {
+        domainName: {
+          domainName: props.apiDomainName,
+          certificate: githubApiCertificate,
+          // Additional domain configurations
+        },
+      });
+
+      // const domain = new DomainName(this, "CustomDomain", {
+      //   domainName: props.apiDomainName,
+      //   certificate: githubApiCertificate,
+      // });
+
+      // // Map the custom domain to the API stage
+      // new BasePathMapping(this, "BasePathMapping", {
+      //   domainName: domain,
+      //   restApi: api,
+      //   stage: api.deploymentStage,
+      // });
+
+      // api.addDomainName("ApiDomain", {
+      //   domainName: props.apiDomainName,
+      //   certificate: githubApiCertificate,
+      // });
+
+      // Create DNS record
+      new route53.ARecord(this, "ApiDomainRecord", {
+        zone: props.hostedZone,
+        recordName: props.apiDomainName,
+        target: route53.RecordTarget.fromAlias(new targets.ApiGateway(api)),
+      });
+    } else {
+      api = new RestApi(this, "RestApi");
+    }
 
     const openIdConfigurationFunction = new LambdaFunction(
       this,
@@ -104,43 +154,6 @@ export class UserPoolIdentityProviderGithub extends Construct {
         proxy: true,
       }),
     );
-
-    // Set up custom domain if provided
-    if (props.apiDomainName && props.hostedZone) {
-      // Create certificate for GitHub API Gateway in the current region
-      const githubApiCertificate = new acm.Certificate(
-        this,
-        "GithubApiCertificate",
-        {
-          domainName: props.apiDomainName,
-          validation: acm.CertificateValidation.fromDns(props.hostedZone),
-        },
-      );
-
-      const domain = new DomainName(this, "CustomDomain", {
-        domainName: props.apiDomainName,
-        certificate: githubApiCertificate,
-      });
-
-      api.addDomainName("ApiDomain", {
-        domainName: domain.domainName,
-        certificate: githubApiCertificate,
-      });
-
-      // Map the custom domain to the API stage
-      new BasePathMapping(this, "BasePathMapping", {
-        domainName: domain,
-        restApi: api,
-        stage: api.deploymentStage,
-      });
-
-      // Create DNS record
-      new route53.ARecord(this, "ApiDomainRecord", {
-        zone: props.hostedZone,
-        recordName: props.apiDomainName,
-        target: route53.RecordTarget.fromAlias(new targets.ApiGateway(api)),
-      });
-    }
 
     const homeDir = process.env.HOME || "/root";
     const npmRcPath = path.join(homeDir, ".npmrc");
@@ -186,7 +199,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
         },
       );
     } else {
-      this.userPoolIdentityProvider = null;
+      this.userPoolIdentityProvider = undefined;
     }
   }
 }
