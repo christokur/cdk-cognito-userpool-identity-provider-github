@@ -158,6 +158,14 @@
         }
       ]
     },
+    "localbuild": {
+      "name": "localbuild",
+      "steps": [
+        {
+          "exec": "rm -fr dist lib && npx projen && npm run build && yalc publish && rm -rf node_modules && ln -s $(realpath ../b2b-sso-service/node_modules) node_modules"
+        }
+      ]
+    },
     "package": {
       "name": "package",
       "description": "Creates the distribution package",

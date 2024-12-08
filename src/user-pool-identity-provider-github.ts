@@ -119,11 +119,13 @@ export class UserPoolIdentityProviderGithub extends Construct {
       });
       new cdk.CfnOutput(this, "url", { value: api.url || "" });
 
-      // Assign the API URL to the public property
-      this.apiUrl = api.url || "";
       this.domainName = api.domainName?.domainName || "";
+      // Assign the API URL to the public property
+      this.apiUrl = `https://${this.domainName}`;
     } else {
       api = new RestApi(this, "RestApi");
+      // Assign the API URL to the public property
+      this.apiUrl = api.url || "";
     }
 
     const openIdConfigurationFunction = new LambdaFunction(
@@ -174,6 +176,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
       );
     } else {
       fs.copyFileSync(npmRcPath, `${__dirname}/.npmrc`);
+      console.log(`Copied .npmrc to ${path.resolve(__dirname, ".npmrc")}`);
     }
     assert(
       fs.existsSync(`${__dirname}/.npmrc`),

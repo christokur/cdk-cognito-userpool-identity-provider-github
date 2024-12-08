@@ -42,7 +42,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         ".yalc",
         "yalc*",
       ],
-      jsiiReleaseVersion: "2.2.0",
+      jsiiReleaseVersion: "2.2.1",
       nextVersionCommand: "bump2version patch --allow-dirty",
       releaseToNpm: false,
       release: false,
@@ -147,6 +147,10 @@ project.addTask("publish", {
 
 project.addTask("rebuild", {
   exec: "rm -fr dist lib && npm run build",
+});
+
+project.addTask("localbuild", {
+  exec: "rm -fr dist lib && npx projen && npm run build && yalc publish && rm -rf node_modules && ln -s $(realpath ../b2b-sso-service/node_modules) node_modules",
 });
 
 project.addTask("repackage", {
