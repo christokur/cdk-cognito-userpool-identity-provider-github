@@ -145,10 +145,9 @@ export class UserPoolIdentityProviderGithub extends Construct {
     const homeDir = process.env.HOME || "/root";
     const npmRcPath = path.join(homeDir, ".npmrc");
     if (!fs.existsSync(npmRcPath)) {
-      console.warn(
+      throw new Error(
         `WARNING: .npmrc file not found in ${homeDir}. You may need to create one or set the "NPM_CONFIG_USERCONFIG" environment variable.`,
       );
-      process.exit(1);
     } else {
       fs.copyFileSync(npmRcPath, `${__dirname}/.npmrc`);
     }

@@ -1,6 +1,7 @@
 import { Template } from "aws-cdk-lib/assertions";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
 import { Code } from "aws-cdk-lib/aws-lambda";
+import { IHostedZone } from "aws-cdk-lib/aws-route53";
 import { Stack } from "aws-cdk-lib/core";
 import { UserPoolIdentityProviderGithub } from "../src";
 
@@ -103,4 +104,68 @@ test("UserPoolIdentityProviderGithub uses custom gitUrl and gitBranch", () => {
       GIT_BRANCH: customGitBranch,
     },
   });
+});
+
+test("UserPoolIdentityProviderGithub creates certificate for custom domain", () => {
+  const stack = new Stack();
+  const mockHostedZone = {
+    hostedZoneId: "DUMMY",
+    zoneName: "example.com",
+  } as IHostedZone;
+
+  new UserPoolIdentityProviderGithub(stack, "UserPoolIdentityProviderGithub", {
+    clientId,
+    clientSecret,
+    userPool: new UserPool(stack, "UserPool"),
+    cognitoHostedUiDomain,
+    apiDomainName: "api.example.com",
+    hostedZone: mockHostedZone,
+  });
+
+  const template = Template.fromStack(stack);
+  template.hasResourceProperties("AWS::CertificateManager::Certificate", {
+    DomainName: "api.example.com",
+  });
+});
+
+test("UserPoolIdentityProviderGithub handles missing .npmrc", () => {
+  const stack = new Stack();
+  const originalHome = process.env.HOME;
+  process.env.HOME = "/nonexistent";
+
+  expect(() => {
+    new UserPoolIdentityProviderGithub(
+      stack,
+      "UserPoolIdentityProviderGithub",
+      {
+        clientId,
+        clientSecret,
+        userPool: new UserPool(stack, "UserPool"),
+        cognitoHostedUiDomain,
+      },
+    );
+  }).toThrow();
+
+  process.env.HOME = originalHome;
+});
+
+test("UserPoolIdentityProviderGithub handles missing HOME env var", () => {
+  const stack = new Stack();
+  const originalHome = process.env.HOME;
+  delete process.env.HOME; // This will trigger the /root fallback
+
+  expect(() => {
+    new UserPoolIdentityProviderGithub(
+      stack,
+      "UserPoolIdentityProviderGithub",
+      {
+        clientId,
+        clientSecret,
+        userPool: new UserPool(stack, "UserPool"),
+        cognitoHostedUiDomain,
+      },
+    );
+  }).toThrow(/WARNING: .npmrc file not found in \/root/);
+
+  process.env.HOME = originalHome;
 });
