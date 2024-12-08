@@ -28,7 +28,7 @@
       "name": "clean",
       "steps": [
         {
-          "exec": "rm -fr node_modules dist coverage test-reports lib package-lock.json package.json .projen .jsii .mergify.yml .eslintrc.json env.txt errors.txt"
+          "exec": "rm -fr node_modules dist coverage test-reports lib package-lock.json .projen .jsii .mergify.yml .eslintrc.json env.txt errors.txt"
         }
       ]
     },
@@ -250,6 +250,22 @@
       "steps": [
         {
           "exec": "rm -fr node_modules package-lock.json dist coverage test-reports lib && npm install"
+        }
+      ]
+    },
+    "repackage": {
+      "name": "repackage",
+      "steps": [
+        {
+          "exec": "rm -fr dist lib && npm run package"
+        }
+      ]
+    },
+    "republish": {
+      "name": "republish",
+      "steps": [
+        {
+          "exec": "rm -fr dist lib && npm run publish"
         }
       ]
     },

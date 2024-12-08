@@ -42,7 +42,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         ".yalc",
         "yalc*",
       ],
-      jsiiReleaseVersion: "2.1.5",
+      jsiiReleaseVersion: "2.1.7",
       nextVersionCommand: "bump2version patch --allow-dirty",
       releaseToNpm: false,
       release: false,
@@ -55,9 +55,14 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         "jest-junit@16.0.0",
         "projen@^0.90.6",
         "jsii-rosetta@5.6.0",
-        "@types/node",
         "aws-cdk-lib@2.171.1",
         "constructs@10.4.2",
+        "@types/node",
+        "ts-node",
+        "eslint@^8",
+        "eslint-import-resolver-typescript@^3.5.5",
+        "eslint-plugin-import@^2.27.5",
+        "typescript@~5.6.3",
       ],
       peerDependencyOptions: {
         pinnedDevDependency: true,
@@ -116,7 +121,7 @@ project.addTask("test:debug", {
 });
 
 project.addTask("clean", {
-  exec: "rm -fr node_modules dist coverage test-reports lib package-lock.json package.json .projen .jsii .mergify.yml .eslintrc.json env.txt errors.txt",
+  exec: "rm -fr node_modules dist coverage test-reports lib package-lock.json .projen .jsii .mergify.yml .eslintrc.json env.txt errors.txt",
 });
 
 project.addTask("reinstall", {
@@ -137,6 +142,14 @@ project.addTask("publish", {
       name: "Publish to CodeArtifact",
     },
   ],
+});
+
+project.addTask("repackage", {
+  exec: "rm -fr dist lib && npm run package",
+});
+
+project.addTask("republish", {
+  exec: "rm -fr dist lib && npm run publish",
 });
 
 // The Dockerfile isn't interpreted by TypeScript

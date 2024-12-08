@@ -28,6 +28,8 @@
     "pre-compile": "npx projen pre-compile",
     "publish": "npx projen publish",
     "reinstall": "npx projen reinstall",
+    "repackage": "npx projen repackage",
+    "republish": "npx projen republish",
     "test": "npx projen test",
     "test:debug": "npx projen test:debug",
     "test:watch": "npx projen test:watch",
@@ -81,7 +83,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "2.1.5",
+  "version": "2.1.7",
   "jest": {
     "coverageProvider": "v8",
     "verbose": true,
