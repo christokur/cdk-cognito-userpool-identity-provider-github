@@ -152,7 +152,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
     const packageJsonPath = path.join(__dirname, "..", "package.json");
     const version = fs.existsSync(packageJsonPath)
       ? JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version
-      : "2.3.0";
+      : "2.3.1";
     console.log(`Version: ${version}`);
 
     const openIdConfigurationFunction = new LambdaFunction(
@@ -199,7 +199,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
     if (props.createUserPoolIdentityProvider) {
       let apiEndpoint = api.url;
       if (props.apiDomainName) {
-        apiEndpoint = `https://${props.apiDomainName}`;
+        apiEndpoint = `https://${props.apiDomainName}/${api.deploymentStage.stageName}`;
       }
 
       this.userPoolIdentityProvider = new CfnUserPoolIdentityProvider(
