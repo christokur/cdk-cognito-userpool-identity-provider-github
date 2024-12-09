@@ -2,6 +2,9 @@
 FROM node:20-slim AS builder
 ARG GIT_URL=https://github.com/christokur/github-cognito-openid-wrapper
 ARG GIT_BRANCH=master
+ARG VERSION=0.0.0  # Add this line
+
+RUN echo "Building version ${VERSION}"  # This will print the version to the build output
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   git \

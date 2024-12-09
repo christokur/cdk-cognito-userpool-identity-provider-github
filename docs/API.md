@@ -170,6 +170,7 @@ public readonly userPoolIdentityProvider: CfnUserPoolIdentityProvider;
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitBranch">gitBranch</a></code> | <code>string</code> | The branch of the Git repository to clone for the GitHub wrapper. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitUrl">gitUrl</a></code> | <code>string</code> | The URL of the Git repository for the GitHub wrapper. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | The hosted zone for the custom domain. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.version">version</a></code> | <code>string</code> | The version string. |
 
 ---
 
@@ -278,6 +279,18 @@ public readonly hostedZone: IHostedZone;
 - *Type:* aws-cdk-lib.aws_route53.IHostedZone
 
 The hosted zone for the custom domain.
+
+---
+
+##### `version`<sup>Optional</sup> <a name="version" id="cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.version"></a>
+
+```typescript
+public readonly version: string;
+```
+
+- *Type:* string
+
+The version string.
 
 ---
 

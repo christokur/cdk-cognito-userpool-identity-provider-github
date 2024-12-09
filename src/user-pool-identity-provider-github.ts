@@ -40,6 +40,8 @@ export interface IUserPoolIdentityProviderGithubProps {
   hostedZone?: IHostedZone;
   /** Create the user pool */
   createUserPoolIdentityProvider?: boolean;
+  /** The version string */
+  version?: string;
 }
 
 /**
@@ -147,6 +149,12 @@ export class UserPoolIdentityProviderGithub extends Construct {
       "Dockerfile not found in __dirname",
     );
 
+    const packageJsonPath = path.join(__dirname, "..", "package.json");
+    const version = fs.existsSync(packageJsonPath)
+      ? JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version
+      : "2.3.0";
+    console.log(`Version: ${version}`);
+
     const openIdConfigurationFunction = new LambdaFunction(
       this,
       "OpenIdConfigurationFunction",
@@ -160,6 +168,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
               props.gitUrl ||
               "https://github.com/christokur/github-cognito-openid-wrapper",
             GIT_BRANCH: props.gitBranch || "master",
+            VERSION: props.version || version,
           },
         }),
         environment: {
@@ -188,7 +197,10 @@ export class UserPoolIdentityProviderGithub extends Construct {
     );
 
     if (props.createUserPoolIdentityProvider) {
-      const apiEndpoint = props.apiDomainName || api.url;
+      let apiEndpoint = api.url;
+      if (props.apiDomainName) {
+        apiEndpoint = `https://${props.apiDomainName}`;
+      }
 
       this.userPoolIdentityProvider = new CfnUserPoolIdentityProvider(
         this,

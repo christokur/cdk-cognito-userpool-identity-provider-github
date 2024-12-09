@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as path from "path";
 import { Stack } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
@@ -74,11 +76,17 @@ test("UserPoolIdentityProviderGithub uses default gitUrl and gitBranch", () => {
     cognitoHostedUiDomain,
   });
 
+  const packageJsonPath = path.join(__dirname, "..", "package.json");
+  const version = fs.existsSync(packageJsonPath)
+    ? JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version
+    : "0.0.0";
+
   expect(Code.fromDockerBuild).toHaveBeenCalledWith(expect.any(String), {
     file: "Dockerfile",
     buildArgs: {
       GIT_URL: "https://github.com/christokur/github-cognito-openid-wrapper",
       GIT_BRANCH: "master",
+      VERSION: version,
     },
   });
 });
@@ -97,11 +105,17 @@ test("UserPoolIdentityProviderGithub uses custom gitUrl and gitBranch", () => {
     gitBranch: customGitBranch,
   });
 
+  const packageJsonPath = path.join(__dirname, "..", "package.json");
+  const version = fs.existsSync(packageJsonPath)
+    ? JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version
+    : "0.0.0";
+
   expect(Code.fromDockerBuild).toHaveBeenCalledWith(expect.any(String), {
     file: "Dockerfile",
     buildArgs: {
       GIT_URL: customGitUrl,
       GIT_BRANCH: customGitBranch,
+      VERSION: version,
     },
   });
 });
