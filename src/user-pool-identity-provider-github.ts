@@ -152,7 +152,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
     const packageJsonPath = path.join(__dirname, "..", "package.json");
     const version = fs.existsSync(packageJsonPath)
       ? JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version
-      : "2.3.3";
+      : "2.3.4";
     console.log(`Version: ${version}`);
 
     const openIdConfigurationFunction = new LambdaFunction(
