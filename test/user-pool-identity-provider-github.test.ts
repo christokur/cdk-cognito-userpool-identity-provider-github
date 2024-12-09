@@ -47,7 +47,7 @@ test("UserPoolIdentityProviderGithub creates resources", () => {
   template.hasResourceProperties("AWS::ApiGateway::RestApi", {});
 
   template.hasResourceProperties("AWS::Lambda::Function", {
-    Handler: "openIdConfiguration.handler",
+    Handler: "index.handler",
     Environment: {
       Variables: {
         COGNITO_REDIRECT_URI: `${cognitoHostedUiDomain}/oauth2/idpresponse`,
@@ -57,7 +57,7 @@ test("UserPoolIdentityProviderGithub creates resources", () => {
         GITHUB_LOGIN_URL: "https://github.com",
       },
     },
-    Runtime: "nodejs18.x",
+    Runtime: "nodejs20.x",
     Timeout: 900,
   });
 
