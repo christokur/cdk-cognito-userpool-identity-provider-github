@@ -42,7 +42,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         ".yalc",
         "yalc*",
       ],
-      jsiiReleaseVersion: "2.3.4",
+      jsiiReleaseVersion: "2.3.5",
       nextVersionCommand: "bump2version patch --allow-dirty",
       releaseToNpm: false,
       release: false,

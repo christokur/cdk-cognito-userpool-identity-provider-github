@@ -152,7 +152,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
     const packageJsonPath = path.join(__dirname, "..", "package.json");
     const version = fs.existsSync(packageJsonPath)
       ? JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version
-      : "2.3.4";
+      : "2.3.5";
     console.log(`Version: ${version}`);
 
     const openIdConfigurationFunction = new LambdaFunction(
@@ -170,6 +170,8 @@ export class UserPoolIdentityProviderGithub extends Construct {
             GIT_BRANCH: props.gitBranch || "master",
             VERSION: props.version || version,
           },
+          cacheDisabled: true,
+          platform: "linux/amd64",
         }),
         environment: {
           COGNITO_REDIRECT_URI: `${props.cognitoHostedUiDomain}/oauth2/idpresponse`,

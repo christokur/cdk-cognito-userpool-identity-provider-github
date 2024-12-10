@@ -88,6 +88,8 @@ test("UserPoolIdentityProviderGithub uses default gitUrl and gitBranch", () => {
       GIT_BRANCH: "master",
       VERSION: version,
     },
+    cacheDisabled: true,
+    platform: "linux/amd64",
   });
 });
 
@@ -117,6 +119,8 @@ test("UserPoolIdentityProviderGithub uses custom gitUrl and gitBranch", () => {
       GIT_BRANCH: customGitBranch,
       VERSION: version,
     },
+    cacheDisabled: true,
+    platform: "linux/amd64",
   });
 });
 
