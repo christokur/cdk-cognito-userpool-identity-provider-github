@@ -1,5 +1,6 @@
 import { Stack } from "aws-cdk-lib";
-import { Template } from "aws-cdk-lib/assertions";
+import { Template, Match } from "aws-cdk-lib/assertions";
+import { MethodLoggingLevel } from "aws-cdk-lib/aws-apigateway";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
 import { Code } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
@@ -132,6 +133,9 @@ test("UserPoolIdentityProviderGithub creates certificate for custom domain", () 
 });
 
 test("UserPoolIdentityProviderGithub handles missing .npmrc", () => {
+  const fs = jest.requireActual("fs");
+  const existsSyncSpy = jest.spyOn(fs, "existsSync").mockReturnValue(false);
+
   const stack = new Stack();
   process.env.HOME = "/nonexistent";
 
@@ -142,12 +146,16 @@ test("UserPoolIdentityProviderGithub handles missing .npmrc", () => {
       clientSecret,
       cognitoHostedUiDomain,
     });
-  }).toThrow();
+  }).toThrow(/WARNING: .npmrc file not found in \/nonexistent/);
 
   process.env.HOME = originalHome;
+  existsSyncSpy.mockRestore();
 });
 
 test("UserPoolIdentityProviderGithub handles missing HOME env var", () => {
+  const fs = jest.requireActual("fs");
+  const existsSyncSpy = jest.spyOn(fs, "existsSync").mockReturnValue(false);
+
   const stack = new Stack();
   delete process.env.HOME;
 
@@ -161,6 +169,7 @@ test("UserPoolIdentityProviderGithub handles missing HOME env var", () => {
   }).toThrow(/WARNING: .npmrc file not found in \/root/);
 
   process.env.HOME = originalHome;
+  existsSyncSpy.mockRestore();
 });
 
 test("UserPoolIdentityProviderGithub does not create identity provider when createUserPoolIdentityProvider is false", () => {
@@ -233,5 +242,73 @@ test("UserPoolIdentityProviderGithub sets correct Lambda environment variables",
         GITHUB_LOGIN_URL: "https://github.com",
       },
     },
+  });
+});
+
+test("UserPoolIdentityProviderGithub creates API with default configuration", () => {
+  const stack = new Stack();
+  new UserPoolIdentityProviderGithub(stack, "UserPoolIdentityProviderGithub", {
+    clientId,
+    clientSecret,
+    userPool: new UserPool(stack, "UserPool"),
+    cognitoHostedUiDomain,
+  });
+
+  const template = Template.fromStack(stack);
+
+  template.hasResourceProperties("AWS::ApiGateway::RestApi", {
+    Name: "GitHubOIDCIdpApi",
+    Description: "GitHub OIDC Identity Provider API",
+  });
+
+  template.hasResourceProperties("AWS::ApiGateway::Stage", {
+    StageName: "prod",
+    MethodSettings: [
+      {
+        HttpMethod: "*",
+        ResourcePath: "/*",
+        LoggingLevel: "INFO",
+        DataTraceEnabled: true,
+        MetricsEnabled: true,
+      },
+    ],
+  });
+});
+
+test("UserPoolIdentityProviderGithub allows overriding API configuration", () => {
+  const stack = new Stack();
+  new UserPoolIdentityProviderGithub(stack, "UserPoolIdentityProviderGithub", {
+    clientId,
+    clientSecret,
+    userPool: new UserPool(stack, "UserPool"),
+    cognitoHostedUiDomain,
+    apiOptions: {
+      description: "Custom API Description",
+      cloudWatchRole: false,
+      loggingLevel: MethodLoggingLevel.ERROR,
+      dataTraceEnabled: false,
+      metricsEnabled: false,
+    },
+  });
+
+  const template = Template.fromStack(stack);
+
+  template.hasResourceProperties("AWS::ApiGateway::RestApi", {
+    Name: "GitHubOIDCIdpApi",
+    Description: "Custom API Description",
+  });
+
+  // Verify that method settings can be overridden while maintaining structure
+  template.hasResourceProperties("AWS::ApiGateway::Stage", {
+    StageName: "prod",
+    MethodSettings: Match.arrayWith([
+      Match.objectLike({
+        HttpMethod: "*",
+        ResourcePath: "/*",
+        LoggingLevel: "ERROR",
+        DataTraceEnabled: false,
+        MetricsEnabled: false,
+      }),
+    ]),
   });
 });
