@@ -1,4 +1,4 @@
-import * as fs from "fs";
+import { execSync } from "child_process";
 import { AwsCdkConstructLibrary } from "projen/lib/awscdk";
 import { NodePackageManager } from "projen/lib/javascript";
 
@@ -42,13 +42,14 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         ".yalc",
         "yalc*",
       ],
-      jsiiReleaseVersion: "2.3.5",
+      jsiiReleaseVersion: "2.0.6",
       nextVersionCommand: "bump2version patch --allow-dirty",
       releaseToNpm: false,
       release: false,
       minNodeVersion: "18.0.0",
       jsiiVersion: "5.6.0",
       deps: [],
+      bundledDeps: ["github-cognito-openid-wrapper@^1.3.7"],
       devDeps: [
         "@jest/globals@^29.7.0",
         "@types/node@22.10.1",
@@ -64,6 +65,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         "eslint-plugin-import@^2.27.5",
         "typescript@~5.6.3",
         "eslint-plugin-prettier",
+        "eslint-config-prettier",
       ],
       peerDependencyOptions: {
         pinnedDevDependency: true,
@@ -95,18 +97,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
 
   postSynthesize() {
     super.postSynthesize();
-    try {
-      const version = fs.readFileSync("VERSION", "utf8").trim();
-      const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
-      packageJson.version = version;
-      fs.writeFileSync(
-        "package.json",
-        JSON.stringify(packageJson, null, 2) + "\n",
-      );
-      console.log(`Updated version to ${version} in package.json`);
-    } catch (error) {
-      console.error("Error updating version:", error);
-    }
+    execSync("node scripts/update-version.js", { stdio: "inherit" });
   }
 }
 
@@ -146,19 +137,19 @@ project.addTask("publish", {
 });
 
 project.addTask("rebuild", {
-  exec: "rm -fr dist lib && npm run build",
+  exec: "rm -fr dist lib && npx projen && npx projen build",
 });
 
 project.addTask("localbuild", {
-  exec: "rm -fr dist lib && npx projen && npm run build && yalc publish && rm -rf node_modules && ln -s $(realpath ../b2b-sso-service/node_modules) node_modules",
+  exec: "rm -fr dist lib && npx projen && npx projen build && yalc publish && rm -rf node_modules && ln -s $(realpath ../b2b-sso-service/node_modules) node_modules",
 });
 
 project.addTask("repackage", {
-  exec: "rm -fr dist lib && npm run package",
+  exec: "rm -fr dist lib && npx projen && npx projen package",
 });
 
 project.addTask("republish", {
-  exec: "rm -fr dist lib && npm run publish",
+  exec: "rm -fr dist lib && npx projen && npx projen publish",
 });
 
 // The Dockerfile isn't interpreted by TypeScript
@@ -201,6 +192,11 @@ if (eslintTask) {
 const docgenTask = project.tasks.tryFind("docgen");
 if (docgenTask) {
   docgenTask.reset("jsii-docgen -o docs/API.md");
+}
+
+const defaultTask = project.tasks.tryFind("default");
+if (defaultTask) {
+  defaultTask.prependExec("node scripts/update-version.js");
 }
 
 project.synth();

@@ -1,5 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
 import { Stack } from "aws-cdk-lib";
 import { Template } from "aws-cdk-lib/assertions";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
@@ -11,15 +9,21 @@ const clientId = "myClientId";
 const clientSecret = "myClientSecret";
 const cognitoHostedUiDomain = "https://cognito.domain";
 
-let originalFromDockerBuild: typeof Code.fromDockerBuild;
+let originalFromAsset: typeof Code.fromAsset;
+const originalHome = process.env.HOME;
 
 beforeAll(() => {
-  originalFromDockerBuild = Code.fromDockerBuild;
+  originalFromAsset = Code.fromAsset;
+  process.env.NODE_ENV = "test";
   jest.clearAllMocks();
 });
 
+afterEach(() => {
+  process.env.HOME = originalHome;
+});
+
 beforeEach(() => {
-  (Code.fromDockerBuild as jest.Mock) = jest.fn().mockReturnValue({
+  (Code.fromAsset as jest.Mock) = jest.fn().mockReturnValue({
     bindToResource: jest.fn(),
     isInline: false,
     bind: () => ({
@@ -29,7 +33,7 @@ beforeEach(() => {
 });
 
 afterAll(() => {
-  Code.fromDockerBuild = originalFromDockerBuild;
+  Code.fromAsset = originalFromAsset;
 });
 
 test("UserPoolIdentityProviderGithub creates resources", () => {
@@ -69,6 +73,7 @@ test("UserPoolIdentityProviderGithub creates resources", () => {
 
 test("UserPoolIdentityProviderGithub uses default gitUrl and gitBranch", () => {
   const stack = new Stack();
+
   new UserPoolIdentityProviderGithub(stack, "UserPoolIdentityProviderGithub", {
     clientId,
     clientSecret,
@@ -76,21 +81,11 @@ test("UserPoolIdentityProviderGithub uses default gitUrl and gitBranch", () => {
     cognitoHostedUiDomain,
   });
 
-  const packageJsonPath = path.join(__dirname, "..", "package.json");
-  const version = fs.existsSync(packageJsonPath)
-    ? JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version
-    : "0.0.0";
+  expect(Code.fromAsset).toHaveBeenCalledWith(expect.any(String));
 
-  expect(Code.fromDockerBuild).toHaveBeenCalledWith(expect.any(String), {
-    file: "Dockerfile",
-    buildArgs: {
-      GIT_URL: "https://github.com/christokur/github-cognito-openid-wrapper",
-      GIT_BRANCH: "master",
-      VERSION: version,
-    },
-    cacheDisabled: true,
-    platform: "linux/amd64",
-  });
+  // Verify the path is correct
+  const callPath = (Code.fromAsset as jest.Mock).mock.calls[0][0];
+  expect(callPath).toMatch(/github-cognito-openid-wrapper\/dist-lambda$/);
 });
 
 test("UserPoolIdentityProviderGithub uses custom gitUrl and gitBranch", () => {
@@ -107,21 +102,11 @@ test("UserPoolIdentityProviderGithub uses custom gitUrl and gitBranch", () => {
     gitBranch: customGitBranch,
   });
 
-  const packageJsonPath = path.join(__dirname, "..", "package.json");
-  const version = fs.existsSync(packageJsonPath)
-    ? JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version
-    : "0.0.0";
+  expect(Code.fromAsset).toHaveBeenCalledWith(expect.any(String));
 
-  expect(Code.fromDockerBuild).toHaveBeenCalledWith(expect.any(String), {
-    file: "Dockerfile",
-    buildArgs: {
-      GIT_URL: customGitUrl,
-      GIT_BRANCH: customGitBranch,
-      VERSION: version,
-    },
-    cacheDisabled: true,
-    platform: "linux/amd64",
-  });
+  // Verify the path is correct
+  const callPath = (Code.fromAsset as jest.Mock).mock.calls[0][0];
+  expect(callPath).toMatch(/github-cognito-openid-wrapper\/dist-lambda$/);
 });
 
 test("UserPoolIdentityProviderGithub creates certificate for custom domain", () => {
@@ -148,20 +133,15 @@ test("UserPoolIdentityProviderGithub creates certificate for custom domain", () 
 
 test("UserPoolIdentityProviderGithub handles missing .npmrc", () => {
   const stack = new Stack();
-  const originalHome = process.env.HOME;
   process.env.HOME = "/nonexistent";
 
   expect(() => {
-    new UserPoolIdentityProviderGithub(
-      stack,
-      "UserPoolIdentityProviderGithub",
-      {
-        clientId,
-        clientSecret,
-        userPool: new UserPool(stack, "UserPool"),
-        cognitoHostedUiDomain,
-      },
-    );
+    new UserPoolIdentityProviderGithub(stack, "TestConstruct", {
+      userPool: new UserPool(stack, "UserPool"),
+      clientId,
+      clientSecret,
+      cognitoHostedUiDomain,
+    });
   }).toThrow();
 
   process.env.HOME = originalHome;
@@ -169,20 +149,15 @@ test("UserPoolIdentityProviderGithub handles missing .npmrc", () => {
 
 test("UserPoolIdentityProviderGithub handles missing HOME env var", () => {
   const stack = new Stack();
-  const originalHome = process.env.HOME;
-  delete process.env.HOME; // This will trigger the /root fallback
+  delete process.env.HOME;
 
   expect(() => {
-    new UserPoolIdentityProviderGithub(
-      stack,
-      "UserPoolIdentityProviderGithub",
-      {
-        clientId,
-        clientSecret,
-        userPool: new UserPool(stack, "UserPool"),
-        cognitoHostedUiDomain,
-      },
-    );
+    new UserPoolIdentityProviderGithub(stack, "TestConstruct", {
+      userPool: new UserPool(stack, "UserPool"),
+      clientId,
+      clientSecret,
+      cognitoHostedUiDomain,
+    });
   }).toThrow(/WARNING: .npmrc file not found in \/root/);
 
   process.env.HOME = originalHome;

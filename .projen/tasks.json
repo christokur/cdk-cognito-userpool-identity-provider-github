@@ -103,6 +103,9 @@
       "description": "Synthesize project files",
       "steps": [
         {
+          "exec": "node scripts/update-version.js"
+        },
+        {
           "exec": "ts-node --project tsconfig.dev.json .projenrc.ts"
         }
       ]
@@ -162,7 +165,7 @@
       "name": "localbuild",
       "steps": [
         {
-          "exec": "rm -fr dist lib && npx projen && npm run build && yalc publish && rm -rf node_modules && ln -s $(realpath ../b2b-sso-service/node_modules) node_modules"
+          "exec": "rm -fr dist lib && npx projen && npx projen build && yalc publish && rm -rf node_modules && ln -s $(realpath ../b2b-sso-service/node_modules) node_modules"
         }
       ]
     },
@@ -257,7 +260,7 @@
       "name": "rebuild",
       "steps": [
         {
-          "exec": "rm -fr dist lib && npm run build"
+          "exec": "rm -fr dist lib && npx projen && npx projen build"
         }
       ]
     },
@@ -273,7 +276,7 @@
       "name": "repackage",
       "steps": [
         {
-          "exec": "rm -fr dist lib && npm run package"
+          "exec": "rm -fr dist lib && npx projen && npx projen package"
         }
       ]
     },
@@ -281,7 +284,7 @@
       "name": "republish",
       "steps": [
         {
-          "exec": "rm -fr dist lib && npm run publish"
+          "exec": "rm -fr dist lib && npx projen && npx projen publish"
         }
       ]
     },
@@ -329,7 +332,7 @@
           "exec": "npm install"
         },
         {
-          "exec": "npm update @jest/globals @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk-lib eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii prettier projen ts-jest ts-node typescript constructs"
+          "exec": "npm update @jest/globals @types/jest @types/node @typescript-eslint/eslint-plugin @typescript-eslint/parser aws-cdk-lib eslint-config-prettier eslint-import-resolver-typescript eslint-plugin-import eslint-plugin-prettier eslint jest-junit jest jsii-diff jsii-docgen jsii-pacmak jsii-rosetta jsii prettier projen ts-jest ts-node typescript github-cognito-openid-wrapper constructs"
         },
         {
           "exec": "npx projen"

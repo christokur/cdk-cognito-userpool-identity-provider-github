@@ -1,23 +1,13 @@
-import { strict as assert } from "assert";
+import { execSync } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
-import { Duration } from "aws-cdk-lib";
 import * as cdk from "aws-cdk-lib";
-import {
-  LambdaIntegration,
-  RestApi,
-  // DomainName,
-  // BasePathMapping,
-} from "aws-cdk-lib/aws-apigateway";
+import { Duration } from "aws-cdk-lib";
+import { RestApi, LambdaIntegration } from "aws-cdk-lib/aws-apigateway";
 import * as acm from "aws-cdk-lib/aws-certificatemanager";
 import { CfnUserPoolIdentityProvider, UserPool } from "aws-cdk-lib/aws-cognito";
-import {
-  Code,
-  Function as LambdaFunction,
-  Runtime,
-} from "aws-cdk-lib/aws-lambda";
+import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as route53 from "aws-cdk-lib/aws-route53";
-import { IHostedZone } from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
 import { Construct } from "constructs";
 
@@ -37,7 +27,7 @@ export interface IUserPoolIdentityProviderGithubProps {
   /** The custom domain name for the API Gateway */
   apiDomainName?: string;
   /** The hosted zone for the custom domain */
-  hostedZone?: IHostedZone;
+  hostedZone?: route53.IHostedZone;
   /** Create the user pool */
   createUserPoolIdentityProvider?: boolean;
   /** The version string */
@@ -71,6 +61,11 @@ export class UserPoolIdentityProviderGithub extends Construct {
     super(scope, id);
 
     let api = undefined;
+    const restApiName = "GitHubOIDCIdpApi";
+    const restApiProps = {
+      cloudWatchRole: true,
+      description: "GitHub OIDC Identity Provider API",
+    };
 
     // Set up custom domain if provided
     if (props.apiDomainName && props.hostedZone) {
@@ -82,33 +77,14 @@ export class UserPoolIdentityProviderGithub extends Construct {
           domainName: props.apiDomainName,
           validation: acm.CertificateValidation.fromDns(props.hostedZone),
         },
-        // Other RestApi properties
       );
 
-      api = new RestApi(this, "RestApi", {
+      api = new RestApi(this, restApiName, {
         domainName: {
           domainName: props.apiDomainName,
           certificate: githubApiCertificate,
-          // Additional domain configurations
         },
       });
-
-      // const domain = new DomainName(this, "CustomDomain", {
-      //   domainName: props.apiDomainName,
-      //   certificate: githubApiCertificate,
-      // });
-
-      // // Map the custom domain to the API stage
-      // new BasePathMapping(this, "BasePathMapping", {
-      //   domainName: domain,
-      //   restApi: api,
-      //   stage: api.deploymentStage,
-      // });
-
-      // api.addDomainName("ApiDomain", {
-      //   domainName: props.apiDomainName,
-      //   certificate: githubApiCertificate,
-      // });
 
       // Create DNS record
       new route53.ARecord(this, "ApiDomainRecord", {
@@ -125,84 +101,66 @@ export class UserPoolIdentityProviderGithub extends Construct {
       // Assign the API URL to the public property
       this.apiUrl = `https://${this.domainName}`;
     } else {
-      api = new RestApi(this, "RestApi");
+      api = new RestApi(this, restApiName, restApiProps);
       // Assign the API URL to the public property
       this.apiUrl = api.url || "";
     }
 
-    const homeDir = process.env.HOME || "/root";
-    const npmRcPath = path.join(homeDir, ".npmrc");
-    if (!fs.existsSync(npmRcPath)) {
+    // Check for .npmrc file
+    const npmrcPath = path.join(process.env.HOME || "/root", ".npmrc");
+    if (!fs.existsSync(npmrcPath)) {
       throw new Error(
-        `WARNING: .npmrc file not found in ${homeDir}. You may need to create one or set the "NPM_CONFIG_USERCONFIG" environment variable.`,
+        `WARNING: .npmrc file not found in ${process.env.HOME || "/root"}`,
       );
-    } else {
-      fs.copyFileSync(npmRcPath, `${__dirname}/.npmrc`);
-      console.log(`Copied .npmrc to ${path.resolve(__dirname, ".npmrc")}`);
     }
-    assert(
-      fs.existsSync(`${__dirname}/.npmrc`),
-      ".npmrc not copied to __dirname",
-    );
-    assert(
-      fs.existsSync(`${__dirname}/Dockerfile`),
-      "Dockerfile not found in __dirname",
-    );
 
-    const packageJsonPath = path.join(__dirname, "..", "package.json");
-    const version = fs.existsSync(packageJsonPath)
-      ? JSON.parse(fs.readFileSync(packageJsonPath, "utf8")).version
-      : "2.3.5";
-    console.log(`Version: ${version}`);
+    // Build the wrapper package
+    execSync("npm install && npm run build", {
+      cwd: path.join(
+        __dirname,
+        "../node_modules/github-cognito-openid-wrapper",
+      ),
+      stdio: "inherit",
+    });
 
-    const openIdConfigurationFunction = new LambdaFunction(
-      this,
-      "OIDCFunction",
-      {
-        runtime: Runtime.NODEJS_20_X,
-        handler: "index.handler",
-        code: Code.fromDockerBuild(__dirname, {
-          file: "Dockerfile",
-          buildArgs: {
-            GIT_URL:
-              props.gitUrl ||
-              "https://github.com/christokur/github-cognito-openid-wrapper",
-            GIT_BRANCH: props.gitBranch || "master",
-            VERSION: props.version || version,
-          },
-          cacheDisabled: true,
-          platform: "linux/amd64",
-        }),
-        environment: {
-          COGNITO_REDIRECT_URI: `${props.cognitoHostedUiDomain}/oauth2/idpresponse`,
-          GITHUB_API_URL: "https://api.github.com",
-          GITHUB_CLIENT_ID: props.clientId,
-          GITHUB_CLIENT_SECRET: props.clientSecret,
-          GITHUB_LOGIN_URL: "https://github.com",
-        },
-        timeout: Duration.seconds(900),
+    const indexFunction = new lambda.Function(this, "indexFunction", {
+      runtime: lambda.Runtime.NODEJS_20_X,
+      handler: "index.handler",
+      code: lambda.Code.fromAsset(
+        path.join(
+          __dirname,
+          "../node_modules/github-cognito-openid-wrapper/dist-lambda",
+        ),
+      ),
+      environment: {
+        COGNITO_REDIRECT_URI: `${props.cognitoHostedUiDomain}/oauth2/idpresponse`,
+        GITHUB_API_URL: "https://api.github.com",
+        GITHUB_CLIENT_ID: props.clientId,
+        GITHUB_CLIENT_SECRET: props.clientSecret,
+        GITHUB_LOGIN_URL: "https://github.com",
       },
-    );
+      timeout: Duration.seconds(900),
+    });
 
     api.root.addMethod(
       "GET",
-      new LambdaIntegration(openIdConfigurationFunction, {
+      new LambdaIntegration(indexFunction, {
         proxy: true,
       }),
     );
 
     api.root.addResource("{proxy+}").addMethod(
       "ANY",
-      new LambdaIntegration(openIdConfigurationFunction, {
+      new LambdaIntegration(indexFunction, {
         proxy: true,
       }),
     );
 
     if (props.createUserPoolIdentityProvider) {
       let apiEndpoint = api.url;
-      if (props.apiDomainName) {
-        apiEndpoint = `https://${props.apiDomainName}/${api.deploymentStage.stageName}`;
-      }
+      // if (props.apiDomainName) {
+      //   apiEndpoint = `https://${props.apiDomainName}/${api.deploymentStage.stageName}`;
+      // }
 
       this.userPoolIdentityProvider = new CfnUserPoolIdentityProvider(
         this,
