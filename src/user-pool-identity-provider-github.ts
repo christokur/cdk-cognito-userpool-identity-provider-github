@@ -382,6 +382,9 @@ export class UserPoolIdentityProviderGithub extends Construct {
           },
         },
       );
+      new cdk.CfnOutput(this, "oidcIssuerUrl", {
+        value: apiEndpoint,
+      });
     } else {
       this.userPoolIdentityProvider = undefined;
     }
