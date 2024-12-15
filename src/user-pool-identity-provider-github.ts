@@ -271,6 +271,35 @@ export class UserPoolIdentityProviderGithub extends Construct {
       this.apiUrl = api.url || "";
     }
 
+    // Get the stage name from the deployment
+    const stageName = api.deploymentStage.stageName;
+
+    // Set retention for API Gateway execution logs
+    new logs.CfnResourcePolicy(this, "ApiGatewayLogsRetention", {
+      policyName: `${api.restApiId}-logs-retention`,
+      policyDocument: JSON.stringify({
+        Version: "2012-10-17",
+        Statement: [
+          {
+            Effect: "Allow",
+            Principal: { Service: "apigateway.amazonaws.com" },
+            Action: ["logs:PutRetentionPolicy"],
+            Resource: [
+              `arn:aws:logs:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:log-group:API-Gateway-Execution-Logs_${api.restApiId}/${stageName}`,
+            ],
+          },
+        ],
+      }),
+    });
+
+    // Set retention for the log group
+    new logs.LogGroup(this, "ApiGatewayExecutionLogs", {
+      logGroupName: `API-Gateway-Execution-Logs_${api.restApiId}/${stageName}`,
+      retention:
+        props.apiOptions?.logRetentionDays ?? logs.RetentionDays.ONE_MONTH,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
     // Check for .npmrc file
     const npmrcPath = path.join(process.env.HOME || "/root", ".npmrc");
     if (!fs.existsSync(npmrcPath)) {
@@ -331,7 +360,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
         GITHUB_CLIENT_ID: props.clientId,
         GITHUB_CLIENT_SECRET: props.clientSecret,
         GITHUB_LOGIN_URL: "https://github.com",
-        CUSTOM_DOMAIN_NAME: props.apiDomainName || "", // Add custom domain name to environment
+        // CUSTOM_DOMAIN_NAME: props.apiDomainName || "", // Add custom domain name to environment
       },
       timeout: Duration.seconds(900),
       logRetention:
