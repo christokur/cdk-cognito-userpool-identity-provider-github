@@ -152,6 +152,8 @@ public readonly userPoolIdentityProvider: CfnUserPoolIdentityProvider;
 
 ### ApiGatewayOptions <a name="ApiGatewayOptions" id="cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions"></a>
 
+Configuration options for the API Gateway.
+
 #### Initializer <a name="Initializer" id="cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.Initializer"></a>
 
 ```typescript
@@ -164,15 +166,15 @@ const apiGatewayOptions: ApiGatewayOptions = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.cloudWatchRole">cloudWatchRole</a></code> | <code>boolean</code> | Enable CloudWatch role creation (default: true). |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.dataTraceEnabled">dataTraceEnabled</a></code> | <code>boolean</code> | Enable request/response tracing (default: true). |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.description">description</a></code> | <code>string</code> | API description (default: "GitHub OIDC Identity Provider API"). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.cloudWatchRole">cloudWatchRole</a></code> | <code>boolean</code> | Enable CloudWatch role creation for API Gateway logging (default: true). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.dataTraceEnabled">dataTraceEnabled</a></code> | <code>boolean</code> | Enable request/response tracing in API Gateway logs (default: true). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.description">description</a></code> | <code>string</code> | Custom API description (default: "GitHub OIDC Identity Provider API"). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.loggingEnabled">loggingEnabled</a></code> | <code>boolean</code> | Enable CloudWatch logging (default: true). |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.loggingLevel">loggingLevel</a></code> | <code>aws-cdk-lib.aws_apigateway.MethodLoggingLevel</code> | CloudWatch logging level (default: INFO). |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.logRetentionDays">logRetentionDays</a></code> | <code>number</code> | Log retention days for API Gateway logs (default: 30). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.loggingLevel">loggingLevel</a></code> | <code>aws-cdk-lib.aws_apigateway.MethodLoggingLevel</code> | CloudWatch logging level for API Gateway (default: INFO). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.logRetentionDays">logRetentionDays</a></code> | <code>number</code> | Log retention days for API Gateway CloudWatch logs (default: 30). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.methodSettings">methodSettings</a></code> | <code>{[ key: string ]: any}[]</code> | Method settings for API Gateway stage. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.metricsEnabled">metricsEnabled</a></code> | <code>boolean</code> | Enable CloudWatch metrics (default: true). |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.stageOptions">stageOptions</a></code> | <code>{[ key: string ]: any}</code> | Additional stage options. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.metricsEnabled">metricsEnabled</a></code> | <code>boolean</code> | Enable CloudWatch metrics for API Gateway (default: true). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.stageOptions">stageOptions</a></code> | <code>{[ key: string ]: any}</code> | Additional stage options for API Gateway deployment stage. |
 
 ---
 
@@ -184,7 +186,9 @@ public readonly cloudWatchRole: boolean;
 
 - *Type:* boolean
 
-Enable CloudWatch role creation (default: true).
+Enable CloudWatch role creation for API Gateway logging (default: true).
+
+When true, creates an IAM role allowing API Gateway to write logs.
 
 ---
 
@@ -196,7 +200,9 @@ public readonly dataTraceEnabled: boolean;
 
 - *Type:* boolean
 
-Enable request/response tracing (default: true).
+Enable request/response tracing in API Gateway logs (default: true).
+
+When enabled, API Gateway logs the full request/response bodies.
 
 ---
 
@@ -208,7 +214,9 @@ public readonly description: string;
 
 - *Type:* string
 
-API description (default: "GitHub OIDC Identity Provider API").
+Custom API description (default: "GitHub OIDC Identity Provider API").
+
+Appears in API Gateway console and exports.
 
 ---
 
@@ -232,7 +240,9 @@ public readonly loggingLevel: MethodLoggingLevel;
 
 - *Type:* aws-cdk-lib.aws_apigateway.MethodLoggingLevel
 
-CloudWatch logging level (default: INFO).
+CloudWatch logging level for API Gateway (default: INFO).
+
+Available levels: ERROR, INFO, OFF
 
 ---
 
@@ -244,7 +254,10 @@ public readonly logRetentionDays: number;
 
 - *Type:* number
 
-Log retention days for API Gateway logs (default: 30).
+Log retention days for API Gateway CloudWatch logs (default: 30).
+
+Automatically deletes logs older than specified days.
+Use aws-cdk-lib/aws-logs.RetentionDays enum for valid values.
 
 ---
 
@@ -258,6 +271,8 @@ public readonly methodSettings: {[ key: string ]: any}[];
 
 Method settings for API Gateway stage.
 
+Override specific method settings like caching or throttling.
+
 ---
 
 ##### `metricsEnabled`<sup>Optional</sup> <a name="metricsEnabled" id="cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.metricsEnabled"></a>
@@ -268,7 +283,9 @@ public readonly metricsEnabled: boolean;
 
 - *Type:* boolean
 
-Enable CloudWatch metrics (default: true).
+Enable CloudWatch metrics for API Gateway (default: true).
+
+Metrics include latency, count, and error rates.
 
 ---
 
@@ -280,7 +297,9 @@ public readonly stageOptions: {[ key: string ]: any};
 
 - *Type:* {[ key: string ]: any}
 
-Additional stage options.
+Additional stage options for API Gateway deployment stage.
+
+Configure caching, throttling, and other stage-level settings.
 
 ---
 
@@ -291,23 +310,25 @@ Additional stage options.
 
 - *Implemented By:* <a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps">IUserPoolIdentityProviderGithubProps</a>
 
+Properties for configuring the GitHub Identity Provider for AWS Cognito.
+
 
 #### Properties <a name="Properties" id="Properties"></a>
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.lambdaLogRetentionDays">lambdaLogRetentionDays</a></code> | <code>number</code> | Log retention days for Lambda function logs (default: 30). |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientId">clientId</a></code> | <code>string</code> | The client id recognized by Github APIs. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientSecret">clientSecret</a></code> | <code>string</code> | The client secret to be accompanied with clientId for Github APIs to authenticate the client. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.cognitoHostedUiDomain">cognitoHostedUiDomain</a></code> | <code>string</code> | The Cognito hosted UI domain. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.userPool">userPool</a></code> | <code>aws-cdk-lib.aws_cognito.UserPool</code> | The user pool. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.apiDomainName">apiDomainName</a></code> | <code>string</code> | The custom domain name for the API Gateway. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.lambdaLogRetentionDays">lambdaLogRetentionDays</a></code> | <code>number</code> | Log retention days for Lambda function CloudWatch logs (default: 30). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientId">clientId</a></code> | <code>string</code> | The client ID from your GitHub OAuth application. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientSecret">clientSecret</a></code> | <code>string</code> | The client secret from your GitHub OAuth application. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.cognitoHostedUiDomain">cognitoHostedUiDomain</a></code> | <code>string</code> | The domain name for your Cognito hosted UI. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.userPool">userPool</a></code> | <code>aws-cdk-lib.aws_cognito.UserPool</code> | The Cognito User Pool to attach the identity provider to. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.apiDomainName">apiDomainName</a></code> | <code>string</code> | Custom domain name for the API Gateway endpoint (optional). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.apiOptions">apiOptions</a></code> | <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions">ApiGatewayOptions</a></code> | API Gateway configuration options. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.createUserPoolIdentityProvider">createUserPoolIdentityProvider</a></code> | <code>boolean</code> | Create the user pool. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitBranch">gitBranch</a></code> | <code>string</code> | The branch of the Git repository to clone for the GitHub wrapper. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitUrl">gitUrl</a></code> | <code>string</code> | The URL of the Git repository for the GitHub wrapper. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | The hosted zone for the custom domain. |
-| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.version">version</a></code> | <code>string</code> | The version string. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.createUserPoolIdentityProvider">createUserPoolIdentityProvider</a></code> | <code>boolean</code> | Whether to create the Cognito User Pool Identity Provider (default: true). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitBranch">gitBranch</a></code> | <code>string</code> | Git branch to use from the wrapper repository (optional). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitUrl">gitUrl</a></code> | <code>string</code> | Custom Git repository URL for the GitHub wrapper (optional). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Route 53 hosted zone for the custom domain (optional). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.version">version</a></code> | <code>string</code> | Version string for the wrapper package (optional). |
 
 ---
 
@@ -319,7 +340,10 @@ public readonly lambdaLogRetentionDays: number;
 
 - *Type:* number
 
-Log retention days for Lambda function logs (default: 30).
+Log retention days for Lambda function CloudWatch logs (default: 30).
+
+Automatically deletes logs older than specified days.
+Use aws-cdk-lib/aws-logs.RetentionDays enum for valid values.
 
 ---
 
@@ -331,7 +355,9 @@ public readonly clientId: string;
 
 - *Type:* string
 
-The client id recognized by Github APIs.
+The client ID from your GitHub OAuth application.
+
+Obtain this from GitHub Developer Settings.
 
 ---
 
@@ -343,7 +369,10 @@ public readonly clientSecret: string;
 
 - *Type:* string
 
-The client secret to be accompanied with clientId for Github APIs to authenticate the client.
+The client secret from your GitHub OAuth application.
+
+Obtain this from GitHub Developer Settings.
+Keep this value secure and never commit it to source control.
 
 ---
 
@@ -355,7 +384,9 @@ public readonly cognitoHostedUiDomain: string;
 
 - *Type:* string
 
-The Cognito hosted UI domain.
+The domain name for your Cognito hosted UI.
+
+Format: https://your-domain-prefix.auth.region.amazoncognito.com
 
 ---
 
@@ -367,7 +398,9 @@ public readonly userPool: UserPool;
 
 - *Type:* aws-cdk-lib.aws_cognito.UserPool
 
-The user pool.
+The Cognito User Pool to attach the identity provider to.
+
+Must be an existing User Pool instance.
 
 ---
 
@@ -379,7 +412,10 @@ public readonly apiDomainName: string;
 
 - *Type:* string
 
-The custom domain name for the API Gateway.
+Custom domain name for the API Gateway endpoint (optional).
+
+Must be a valid domain name that you control.
+Requires hostedZone to be specified.
 
 ---
 
@@ -393,6 +429,8 @@ public readonly apiOptions: ApiGatewayOptions;
 
 API Gateway configuration options.
 
+Configure logging, metrics, custom domain, and other API settings.
+
 ---
 
 ##### `createUserPoolIdentityProvider`<sup>Optional</sup> <a name="createUserPoolIdentityProvider" id="cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.createUserPoolIdentityProvider"></a>
@@ -403,7 +441,9 @@ public readonly createUserPoolIdentityProvider: boolean;
 
 - *Type:* boolean
 
-Create the user pool.
+Whether to create the Cognito User Pool Identity Provider (default: true).
+
+Set to false to skip identity provider creation.
 
 ---
 
@@ -415,7 +455,10 @@ public readonly gitBranch: string;
 
 - *Type:* string
 
-The branch of the Git repository to clone for the GitHub wrapper.
+Git branch to use from the wrapper repository (optional).
+
+Useful for testing specific versions or features.
+Default: Uses the main/master branch.
 
 ---
 
@@ -427,7 +470,10 @@ public readonly gitUrl: string;
 
 - *Type:* string
 
-The URL of the Git repository for the GitHub wrapper.
+Custom Git repository URL for the GitHub wrapper (optional).
+
+Use this to specify a fork or alternative implementation.
+Default: Uses the standard github-cognito-openid-wrapper package.
 
 ---
 
@@ -439,7 +485,10 @@ public readonly hostedZone: IHostedZone;
 
 - *Type:* aws-cdk-lib.aws_route53.IHostedZone
 
-The hosted zone for the custom domain.
+Route 53 hosted zone for the custom domain (optional).
+
+Required if apiDomainName is specified.
+Must be an existing hosted zone in your AWS account.
 
 ---
 
@@ -451,7 +500,9 @@ public readonly version: string;
 
 - *Type:* string
 
-The version string.
+Version string for the wrapper package (optional).
+
+Useful for tracking deployments or specific wrapper versions.
 
 ---
 

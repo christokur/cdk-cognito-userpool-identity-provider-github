@@ -353,10 +353,9 @@ export class UserPoolIdentityProviderGithub extends Construct {
     );
 
     if (props.createUserPoolIdentityProvider) {
-      let apiEndpoint = api.url;
-      // if (props.apiDomainName) {
-      //   apiEndpoint = `https://${props.apiDomainName}/${api.deploymentStage.stageName}`;
-      // }
+      let apiEndpoint = props.apiDomainName
+        ? `https://${props.apiDomainName}`
+        : api.url;
 
       this.userPoolIdentityProvider = new CfnUserPoolIdentityProvider(
         this,
@@ -369,6 +368,9 @@ export class UserPoolIdentityProviderGithub extends Construct {
             client_id: props.clientId,
             client_secret: props.clientSecret,
             attributes_request_method: "GET",
+            attributes_url: `${apiEndpoint}/userinfo`,
+            // When false, no additional attributes are added to the attributes URL
+            attributes_url_add_attributes: false,
             oidc_issuer: apiEndpoint,
             authorize_scopes: "openid read:user user:email",
           },
