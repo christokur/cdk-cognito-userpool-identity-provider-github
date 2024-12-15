@@ -344,7 +344,10 @@ export class UserPoolIdentityProviderGithub extends Construct {
         path.join(
           __dirname,
           "../node_modules/github-cognito-openid-wrapper/dist-lambda",
-        ),
+        ), // Ensure this directory contains the .map files
+        {
+          exclude: ["node_modules/**/*"], // Exclude unnecessary files
+        },
       ),
       environment: {
         COGNITO_REDIRECT_URI: `${props.cognitoHostedUiDomain}/oauth2/idpresponse`,

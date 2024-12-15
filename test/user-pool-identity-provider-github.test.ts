@@ -82,7 +82,12 @@ test("UserPoolIdentityProviderGithub uses default gitUrl and gitBranch", () => {
     cognitoHostedUiDomain,
   });
 
-  expect(Code.fromAsset).toHaveBeenCalledWith(expect.any(String));
+  expect(Code.fromAsset).toHaveBeenCalledWith(
+    expect.any(String),
+    expect.objectContaining({
+      exclude: ["node_modules/**/*"],
+    }),
+  );
 
   // Verify the path is correct
   const callPath = (Code.fromAsset as jest.Mock).mock.calls[0][0];
@@ -103,7 +108,12 @@ test("UserPoolIdentityProviderGithub uses custom gitUrl and gitBranch", () => {
     gitBranch: customGitBranch,
   });
 
-  expect(Code.fromAsset).toHaveBeenCalledWith(expect.any(String));
+  expect(Code.fromAsset).toHaveBeenCalledWith(
+    expect.any(String),
+    expect.objectContaining({
+      exclude: ["node_modules/**/*"],
+    }),
+  );
 
   // Verify the path is correct
   const callPath = (Code.fromAsset as jest.Mock).mock.calls[0][0];
