@@ -15,6 +15,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as logs from "aws-cdk-lib/aws-logs";
 import * as route53 from "aws-cdk-lib/aws-route53";
 import * as targets from "aws-cdk-lib/aws-route53-targets";
+import * as s3_assets from "aws-cdk-lib/aws-s3-assets";
 import { Construct } from "constructs";
 
 /**
@@ -73,6 +74,20 @@ export interface ApiGatewayOptions {
    */
   readonly logRetentionDays?: number;
 }
+
+/**
+ * Default options for Lambda code assets
+ * Includes source maps for better debugging while excluding unnecessary files
+ * @internal
+ */
+export const DEBUG_LAMBDA_ASSET_OPTIONS: s3_assets.AssetOptions = {
+  ignoreMode: cdk.IgnoreMode.GLOB,
+  exclude: ["node_modules/**/*", "**/*.ts", "**/*.json", "!**/*.js.map"],
+};
+export const DEFAULT_LAMBDA_ASSET_OPTIONS: s3_assets.AssetOptions = {
+  ignoreMode: cdk.IgnoreMode.GLOB,
+  exclude: ["node_modules/**/*", "**/*.ts", "**/*.json", "**/*.js.map"],
+};
 
 /**
  * Properties for configuring the GitHub Identity Provider for AWS Cognito.
@@ -155,6 +170,13 @@ export interface IUserPoolIdentityProviderGithubProps {
    * Use aws-cdk-lib/aws-logs.RetentionDays enum for valid values.
    */
   readonly lambdaLogRetentionDays?: number;
+
+  /**
+   * Include source maps in Lambda assets for better debugging in CloudWatch Logs.
+   * When enabled, this will increase the Lambda deployment package size.
+   * @default false
+   */
+  readonly includeSourceMaps?: boolean;
 }
 
 /**
@@ -344,11 +366,11 @@ export class UserPoolIdentityProviderGithub extends Construct {
         path.join(
           __dirname,
           "../node_modules/github-cognito-openid-wrapper/dist-lambda",
-        ), // Ensure this directory contains the .map files
-        {
-          exclude: ["node_modules/**/*"], // Exclude unnecessary files
-        },
-      ),
+        ),
+        props.includeSourceMaps
+          ? DEBUG_LAMBDA_ASSET_OPTIONS
+          : DEFAULT_LAMBDA_ASSET_OPTIONS,
+      ) as lambda.Code,
       environment: {
         COGNITO_REDIRECT_URI: `${props.cognitoHostedUiDomain}/oauth2/idpresponse`,
         GITHUB_API_URL: "https://api.github.com",

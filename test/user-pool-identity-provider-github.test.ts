@@ -4,7 +4,11 @@ import { MethodLoggingLevel } from "aws-cdk-lib/aws-apigateway";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
 import { Code } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
-import { UserPoolIdentityProviderGithub } from "../src";
+import {
+  UserPoolIdentityProviderGithub,
+  DEBUG_LAMBDA_ASSET_OPTIONS,
+  DEFAULT_LAMBDA_ASSET_OPTIONS,
+} from "../src";
 
 const clientId = "myClientId";
 const clientSecret = "myClientSecret";
@@ -72,7 +76,7 @@ test("UserPoolIdentityProviderGithub creates resources", () => {
   });
 });
 
-test("UserPoolIdentityProviderGithub uses default gitUrl and gitBranch", () => {
+test("UserPoolIdentityProviderGithub uses default asset options without includeSourceMaps", () => {
   const stack = new Stack();
 
   new UserPoolIdentityProviderGithub(stack, "UserPoolIdentityProviderGithub", {
@@ -84,9 +88,7 @@ test("UserPoolIdentityProviderGithub uses default gitUrl and gitBranch", () => {
 
   expect(Code.fromAsset).toHaveBeenCalledWith(
     expect.any(String),
-    expect.objectContaining({
-      exclude: ["node_modules/**/*"],
-    }),
+    expect.objectContaining(DEFAULT_LAMBDA_ASSET_OPTIONS),
   );
 
   // Verify the path is correct
@@ -94,25 +96,20 @@ test("UserPoolIdentityProviderGithub uses default gitUrl and gitBranch", () => {
   expect(callPath).toMatch(/github-cognito-openid-wrapper\/dist-lambda$/);
 });
 
-test("UserPoolIdentityProviderGithub uses custom gitUrl and gitBranch", () => {
+test("UserPoolIdentityProviderGithub uses debug asset options with includeSourceMaps", () => {
   const stack = new Stack();
-  const customGitUrl = "https://github.com/custom/repo";
-  const customGitBranch = "develop";
 
   new UserPoolIdentityProviderGithub(stack, "UserPoolIdentityProviderGithub", {
     clientId,
     clientSecret,
     userPool: new UserPool(stack, "UserPool"),
     cognitoHostedUiDomain,
-    gitUrl: customGitUrl,
-    gitBranch: customGitBranch,
+    includeSourceMaps: true,
   });
 
   expect(Code.fromAsset).toHaveBeenCalledWith(
     expect.any(String),
-    expect.objectContaining({
-      exclude: ["node_modules/**/*"],
-    }),
+    expect.objectContaining(DEBUG_LAMBDA_ASSET_OPTIONS),
   );
 
   // Verify the path is correct
@@ -321,4 +318,24 @@ test("UserPoolIdentityProviderGithub allows overriding API configuration", () =>
       }),
     ]),
   });
+});
+
+test("UserPoolIdentityProviderGithub includes source maps when enabled", () => {
+  const stack = new Stack();
+  const userPool = new UserPool(stack, "UserPool");
+
+  new UserPoolIdentityProviderGithub(stack, "TestConstruct", {
+    userPool,
+    clientId: "testClientId",
+    clientSecret: "testClientSecret",
+    cognitoHostedUiDomain: "https://auth.example.com",
+    includeSourceMaps: true,
+  });
+
+  expect(Code.fromAsset).toHaveBeenCalledWith(
+    expect.any(String),
+    expect.objectContaining({
+      exclude: expect.arrayContaining(["!**/*.js.map"]),
+    }),
+  );
 });
