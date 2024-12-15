@@ -292,14 +292,6 @@ export class UserPoolIdentityProviderGithub extends Construct {
       }),
     });
 
-    // Set retention for the log group
-    new logs.LogGroup(this, "ApiGatewayExecutionLogs", {
-      logGroupName: `API-Gateway-Execution-Logs_${api.restApiId}/${stageName}`,
-      retention:
-        props.apiOptions?.logRetentionDays ?? logs.RetentionDays.ONE_MONTH,
-      removalPolicy: cdk.RemovalPolicy.DESTROY,
-    });
-
     // Check for .npmrc file
     const npmrcPath = path.join(process.env.HOME || "/root", ".npmrc");
     if (!fs.existsSync(npmrcPath)) {
