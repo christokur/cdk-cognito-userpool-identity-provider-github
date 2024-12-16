@@ -18,6 +18,8 @@ import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as s3_assets from "aws-cdk-lib/aws-s3-assets";
 import { Construct } from "constructs";
 
+const VERSION: string = "2.0.13";
+
 /**
  * Configuration options for the API Gateway.
  */
@@ -177,6 +179,20 @@ export interface IUserPoolIdentityProviderGithubProps {
    * @default false
    */
   readonly includeSourceMaps?: boolean;
+
+  /**
+   * Custom domain name for the API Gateway endpoint (optional).
+   * Must be a valid domain name that you control.
+   * Requires hostedZone to be specified.
+   */
+  readonly consumer?: string;
+
+  /**
+   * Enable X-Ray tracing for API Gateway and Lambda (optional).
+   * When enabled, creates detailed traces of requests through the system.
+   * @default false
+   */
+  readonly tracingEnabled?: boolean;
 }
 
 /**
@@ -269,6 +285,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
         },
         deployOptions: {
           ...restApiProps.deployOptions,
+          tracingEnabled: props.tracingEnabled ?? false,
           stageName: "", // Remove stage name when using custom domain
         },
       });
@@ -288,7 +305,10 @@ export class UserPoolIdentityProviderGithub extends Construct {
       // Assign the API URL to the public property
       this.apiUrl = `https://${this.domainName}`;
     } else {
-      api = new RestApi(this, restApiName, restApiProps);
+      api = new RestApi(
+        this, 
+        restApiName, 
+        restApiProps);
       // Assign the API URL to the public property
       this.apiUrl = api.url || "";
     }
@@ -362,6 +382,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
     const indexFunction = new lambda.Function(this, "indexFunction", {
       runtime: lambda.Runtime.NODEJS_20_X,
       handler: "index.handler",
+      tracing: props.tracingEnabled ? lambda.Tracing.ACTIVE : lambda.Tracing.DISABLED,
       code: lambda.Code.fromAsset(
         path.join(
           __dirname,
@@ -378,7 +399,10 @@ export class UserPoolIdentityProviderGithub extends Construct {
         GITHUB_CLIENT_SECRET: props.clientSecret,
         GITHUB_LOGIN_URL: "https://github.com",
         SOURCE_MAP_SUPPORT: props.includeSourceMaps ? "true" : "false",
-        // CUSTOM_DOMAIN_NAME: props.apiDomainName || "", // Add custom domain name to environment
+        CONSUMER:
+          props.consumer || "cdk-cognito-userpool-identity-provider-github",
+        VERSION_CONSUMER: props.version || "0.0.0",
+        VERSION_COMPONENT: VERSION,
       },
       timeout: Duration.seconds(900),
       logRetention:

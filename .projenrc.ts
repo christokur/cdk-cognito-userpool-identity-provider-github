@@ -42,7 +42,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         ".yalc",
         "yalc*",
       ],
-      jsiiReleaseVersion: "2.0.10",
+      jsiiReleaseVersion: "2.0.13",
       nextVersionCommand: "bump2version patch --allow-dirty",
       releaseToNpm: false,
       release: false,
@@ -50,7 +50,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
       jsiiVersion: "5.6.0",
       deps: [],
       bundledDeps: [
-        "github-cognito-openid-wrapper@^1.3.10",
+        "github-cognito-openid-wrapper@^1.3.13",
         "source-map-support",
       ],
       devDeps: [
