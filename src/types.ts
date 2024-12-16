@@ -3,7 +3,29 @@ import { UserPool } from "aws-cdk-lib/aws-cognito";
 import * as route53 from "aws-cdk-lib/aws-route53";
 
 /**
+ * Method settings for the REST API
+ * @public
+ */
+export interface MethodSettings {
+  /**
+   * The HTTP method
+   */
+  readonly httpMethod: string;
+
+  /**
+   * The resource path
+   */
+  readonly resourcePath: string;
+
+  /**
+   * Whether metrics are enabled
+   */
+  readonly metricsEnabled?: boolean;
+}
+
+/**
  * Configuration options for the API Gateway.
+ * @public
  */
 export interface ApiGatewayOptions {
   /** Enable CloudWatch logging (default: true) */
@@ -43,17 +65,12 @@ export interface ApiGatewayOptions {
   readonly stageOptions?: Record<string, any>;
 
   /** Method-level settings for API Gateway */
-  readonly methodSettings?: Array<{
-    httpMethod: string;
-    resourcePath: string;
-    loggingLevel?: MethodLoggingLevel;
-    dataTraceEnabled?: boolean;
-    metricsEnabled?: boolean;
-  }>;
+  readonly methodSettings?: MethodSettings[];
 }
 
 /**
  * Properties for configuring the GitHub Identity Provider for AWS Cognito.
+ * @public
  */
 export interface IUserPoolIdentityProviderGithubProps {
   /** The Cognito User Pool to associate with the GitHub Identity Provider */
