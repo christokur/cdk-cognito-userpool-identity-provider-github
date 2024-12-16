@@ -317,6 +317,7 @@ Properties for configuring the GitHub Identity Provider for AWS Cognito.
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.includeSourceMaps">includeSourceMaps</a></code> | <code>boolean</code> | Include source maps in Lambda assets for better debugging in CloudWatch Logs. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.lambdaLogRetentionDays">lambdaLogRetentionDays</a></code> | <code>number</code> | Log retention days for Lambda function CloudWatch logs (default: 30). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientId">clientId</a></code> | <code>string</code> | The client ID from your GitHub OAuth application. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientSecret">clientSecret</a></code> | <code>string</code> | The client secret from your GitHub OAuth application. |
@@ -329,6 +330,21 @@ Properties for configuring the GitHub Identity Provider for AWS Cognito.
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.gitUrl">gitUrl</a></code> | <code>string</code> | Custom Git repository URL for the GitHub wrapper (optional). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.hostedZone">hostedZone</a></code> | <code>aws-cdk-lib.aws_route53.IHostedZone</code> | Route 53 hosted zone for the custom domain (optional). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.version">version</a></code> | <code>string</code> | Version string for the wrapper package (optional). |
+
+---
+
+##### `includeSourceMaps`<sup>Optional</sup> <a name="includeSourceMaps" id="cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.includeSourceMaps"></a>
+
+```typescript
+public readonly includeSourceMaps: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Include source maps in Lambda assets for better debugging in CloudWatch Logs.
+
+When enabled, this will increase the Lambda deployment package size.
 
 ---
 
