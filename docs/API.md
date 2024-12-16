@@ -320,6 +320,7 @@ Properties for configuring the GitHub Identity Provider for AWS Cognito.
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.consumer">consumer</a></code> | <code>string</code> | Custom domain name for the API Gateway endpoint (optional). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.includeSourceMaps">includeSourceMaps</a></code> | <code>boolean</code> | Include source maps in Lambda assets for better debugging in CloudWatch Logs. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.lambdaLogRetentionDays">lambdaLogRetentionDays</a></code> | <code>number</code> | Log retention days for Lambda function CloudWatch logs (default: 30). |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.tracingEnabled">tracingEnabled</a></code> | <code>boolean</code> | Enable X-Ray tracing for API Gateway and Lambda (optional). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientId">clientId</a></code> | <code>string</code> | The client ID from your GitHub OAuth application. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.clientSecret">clientSecret</a></code> | <code>string</code> | The client secret from your GitHub OAuth application. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.cognitoHostedUiDomain">cognitoHostedUiDomain</a></code> | <code>string</code> | The domain name for your Cognito hosted UI. |
@@ -376,6 +377,21 @@ Log retention days for Lambda function CloudWatch logs (default: 30).
 
 Automatically deletes logs older than specified days.
 Use aws-cdk-lib/aws-logs.RetentionDays enum for valid values.
+
+---
+
+##### `tracingEnabled`<sup>Optional</sup> <a name="tracingEnabled" id="cdk-cognito-userpool-identity-provider-github.IUserPoolIdentityProviderGithubProps.property.tracingEnabled"></a>
+
+```typescript
+public readonly tracingEnabled: boolean;
+```
+
+- *Type:* boolean
+- *Default:* false
+
+Enable X-Ray tracing for API Gateway and Lambda (optional).
+
+When enabled, creates detailed traces of requests through the system.
 
 ---
 

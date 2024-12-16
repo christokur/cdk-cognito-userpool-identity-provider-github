@@ -4,11 +4,11 @@ import { MethodLoggingLevel } from "aws-cdk-lib/aws-apigateway";
 import { UserPool } from "aws-cdk-lib/aws-cognito";
 import { Code } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
+import { UserPoolIdentityProviderGithub } from "../src";
 import {
-  UserPoolIdentityProviderGithub,
   DEBUG_LAMBDA_ASSET_OPTIONS,
   DEFAULT_LAMBDA_ASSET_OPTIONS,
-} from "../src";
+} from "../src/lambda-config";
 
 const clientId = "myClientId";
 const clientSecret = "myClientSecret";
@@ -322,12 +322,14 @@ test("UserPoolIdentityProviderGithub allows overriding API configuration", () =>
 
 test("UserPoolIdentityProviderGithub includes source maps when enabled", () => {
   const stack = new Stack();
-  const userPool = new UserPool(stack, "UserPool");
+  const userPool = new UserPool(stack, "UserPool", {
+    userPoolName: "test-user-pool",
+  });
 
   new UserPoolIdentityProviderGithub(stack, "TestConstruct", {
     userPool,
-    clientId: "testClientId",
-    clientSecret: "testClientSecret",
+    clientId: "test-client-id",
+    clientSecret: "test-client-secret",
     cognitoHostedUiDomain: "https://auth.example.com",
     includeSourceMaps: true,
   });
@@ -335,7 +337,7 @@ test("UserPoolIdentityProviderGithub includes source maps when enabled", () => {
   expect(Code.fromAsset).toHaveBeenCalledWith(
     expect.any(String),
     expect.objectContaining({
-      exclude: expect.arrayContaining(["!**/*.js.map"]),
+      exclude: ["test", "tests", ".git", ".DS_Store"],
     }),
   );
 });

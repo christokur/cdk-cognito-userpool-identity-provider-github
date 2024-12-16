@@ -2,198 +2,14 @@ import { execSync } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import * as cdk from "aws-cdk-lib";
-import { Duration } from "aws-cdk-lib";
-import {
-  RestApi,
-  LambdaIntegration,
-  MethodLoggingLevel,
-  EndpointType,
-} from "aws-cdk-lib/aws-apigateway";
-import * as acm from "aws-cdk-lib/aws-certificatemanager";
-import { CfnUserPoolIdentityProvider, UserPool } from "aws-cdk-lib/aws-cognito";
-import * as lambda from "aws-cdk-lib/aws-lambda";
-import * as logs from "aws-cdk-lib/aws-logs";
-import * as route53 from "aws-cdk-lib/aws-route53";
-import * as targets from "aws-cdk-lib/aws-route53-targets";
-import * as s3_assets from "aws-cdk-lib/aws-s3-assets";
+import { LambdaIntegration } from "aws-cdk-lib/aws-apigateway";
+import { CfnUserPoolIdentityProvider } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs";
+import { createApiGateway } from "./api-gateway";
+import { createLambdaFunction } from "./lambda";
+import { IUserPoolIdentityProviderGithubProps } from "./types";
 
-const VERSION: string = "2.0.13";
-
-/**
- * Configuration options for the API Gateway.
- */
-export interface ApiGatewayOptions {
-  /** Enable CloudWatch logging (default: true) */
-  readonly loggingEnabled?: boolean;
-
-  /**
-   * CloudWatch logging level for API Gateway (default: INFO).
-   * Available levels: ERROR, INFO, OFF
-   */
-  readonly loggingLevel?: MethodLoggingLevel;
-
-  /**
-   * Enable request/response tracing in API Gateway logs (default: true).
-   * When enabled, API Gateway logs the full request/response bodies.
-   */
-  readonly dataTraceEnabled?: boolean;
-
-  /**
-   * Enable CloudWatch metrics for API Gateway (default: true).
-   * Metrics include latency, count, and error rates.
-   */
-  readonly metricsEnabled?: boolean;
-
-  /**
-   * Enable CloudWatch role creation for API Gateway logging (default: true).
-   * When true, creates an IAM role allowing API Gateway to write logs.
-   */
-  readonly cloudWatchRole?: boolean;
-
-  /**
-   * Custom API description (default: "GitHub OIDC Identity Provider API").
-   * Appears in API Gateway console and exports.
-   */
-  readonly description?: string;
-
-  /**
-   * Method settings for API Gateway stage.
-   * Override specific method settings like caching or throttling.
-   */
-  readonly methodSettings?: Record<string, any>[];
-
-  /**
-   * Additional stage options for API Gateway deployment stage.
-   * Configure caching, throttling, and other stage-level settings.
-   */
-  readonly stageOptions?: Record<string, any>;
-
-  /**
-   * Log retention days for API Gateway CloudWatch logs (default: 30).
-   * Automatically deletes logs older than specified days.
-   * Use aws-cdk-lib/aws-logs.RetentionDays enum for valid values.
-   */
-  readonly logRetentionDays?: number;
-}
-
-/**
- * Default options for Lambda code assets
- * Includes source maps for better debugging while excluding unnecessary files
- * @internal
- */
-export const DEBUG_LAMBDA_ASSET_OPTIONS: s3_assets.AssetOptions = {
-  ignoreMode: cdk.IgnoreMode.GLOB,
-  exclude: ["!**/*.js.map"], // Keep .js.map files in dist-lambda
-};
-export const DEFAULT_LAMBDA_ASSET_OPTIONS: s3_assets.AssetOptions = {
-  ignoreMode: cdk.IgnoreMode.GLOB,
-  exclude: ["**/*.js.map"], // Exclude .js.map files in dist-lambda
-};
-
-/**
- * Properties for configuring the GitHub Identity Provider for AWS Cognito.
- */
-export interface IUserPoolIdentityProviderGithubProps {
-  /**
-   * The Cognito User Pool to attach the identity provider to.
-   * Must be an existing User Pool instance.
-   */
-  userPool: UserPool;
-
-  /**
-   * The client ID from your GitHub OAuth application.
-   * Obtain this from GitHub Developer Settings.
-   */
-  clientId: string;
-
-  /**
-   * The client secret from your GitHub OAuth application.
-   * Obtain this from GitHub Developer Settings.
-   * Keep this value secure and never commit it to source control.
-   */
-  clientSecret: string;
-
-  /**
-   * The domain name for your Cognito hosted UI.
-   * Format: https://your-domain-prefix.auth.region.amazoncognito.com
-   */
-  cognitoHostedUiDomain: string;
-
-  /**
-   * Custom Git repository URL for the GitHub wrapper (optional).
-   * Use this to specify a fork or alternative implementation.
-   * Default: Uses the standard github-cognito-openid-wrapper package.
-   */
-  gitUrl?: string;
-
-  /**
-   * Git branch to use from the wrapper repository (optional).
-   * Useful for testing specific versions or features.
-   * Default: Uses the main/master branch.
-   */
-  gitBranch?: string;
-
-  /**
-   * Custom domain name for the API Gateway endpoint (optional).
-   * Must be a valid domain name that you control.
-   * Requires hostedZone to be specified.
-   */
-  apiDomainName?: string;
-
-  /**
-   * Route 53 hosted zone for the custom domain (optional).
-   * Required if apiDomainName is specified.
-   * Must be an existing hosted zone in your AWS account.
-   */
-  hostedZone?: route53.IHostedZone;
-
-  /**
-   * Whether to create the Cognito User Pool Identity Provider (default: true).
-   * Set to false to skip identity provider creation.
-   */
-  createUserPoolIdentityProvider?: boolean;
-
-  /**
-   * Version string for the wrapper package (optional).
-   * Useful for tracking deployments or specific wrapper versions.
-   */
-  version?: string;
-
-  /**
-   * API Gateway configuration options.
-   * Configure logging, metrics, custom domain, and other API settings.
-   */
-  apiOptions?: ApiGatewayOptions;
-
-  /**
-   * Log retention days for Lambda function CloudWatch logs (default: 30).
-   * Automatically deletes logs older than specified days.
-   * Use aws-cdk-lib/aws-logs.RetentionDays enum for valid values.
-   */
-  readonly lambdaLogRetentionDays?: number;
-
-  /**
-   * Include source maps in Lambda assets for better debugging in CloudWatch Logs.
-   * When enabled, this will increase the Lambda deployment package size.
-   * @default false
-   */
-  readonly includeSourceMaps?: boolean;
-
-  /**
-   * Custom domain name for the API Gateway endpoint (optional).
-   * Must be a valid domain name that you control.
-   * Requires hostedZone to be specified.
-   */
-  readonly consumer?: string;
-
-  /**
-   * Enable X-Ray tracing for API Gateway and Lambda (optional).
-   * When enabled, creates detailed traces of requests through the system.
-   * @default false
-   */
-  readonly tracingEnabled?: boolean;
-}
+const VERSION: string = "2.0.14";
 
 /**
  * GitHub OpenID Connect Wrapper for Cognito
@@ -220,119 +36,6 @@ export class UserPoolIdentityProviderGithub extends Construct {
     props: IUserPoolIdentityProviderGithubProps,
   ) {
     super(scope, id);
-
-    let api = undefined;
-    const restApiName = "GitHubOIDCIdpApi";
-    const restApiProps = {
-      cloudWatchRole: props.apiOptions?.cloudWatchRole ?? true,
-      description:
-        props.apiOptions?.description ?? "GitHub OIDC Identity Provider API",
-      deployOptions: {
-        loggingLevel: props.apiOptions?.loggingLevel ?? MethodLoggingLevel.INFO,
-        dataTraceEnabled: props.apiOptions?.dataTraceEnabled ?? true,
-        metricsEnabled: props.apiOptions?.metricsEnabled ?? true,
-        methodSettings: props.apiOptions?.methodSettings ?? [
-          {
-            httpMethod: "*",
-            resourcePath: "/*",
-            loggingLevel:
-              props.apiOptions?.loggingLevel ?? MethodLoggingLevel.INFO,
-            dataTraceEnabled: props.apiOptions?.dataTraceEnabled ?? true,
-            metricsEnabled: props.apiOptions?.metricsEnabled ?? true,
-          },
-        ],
-        ...props.apiOptions?.stageOptions,
-      },
-      accessLogSettings: {
-        destinationArn: new logs.LogGroup(this, "ApiGatewayAccessLogs", {
-          retention:
-            props.apiOptions?.logRetentionDays ?? logs.RetentionDays.ONE_MONTH,
-        }).logGroupArn,
-        format: JSON.stringify({
-          requestId: "$context.requestId",
-          ip: "$context.identity.sourceIp",
-          caller: "$context.identity.caller",
-          user: "$context.identity.user",
-          requestTime: "$context.requestTime",
-          httpMethod: "$context.httpMethod",
-          resourcePath: "$context.resourcePath",
-          status: "$context.status",
-          protocol: "$context.protocol",
-          responseLength: "$context.responseLength",
-        }),
-      },
-    };
-
-    // Set up custom domain if provided
-    if (props.apiDomainName && props.hostedZone) {
-      // Create certificate for GitHub API Gateway in the current region
-      const githubApiCertificate = new acm.Certificate(
-        this,
-        "GithubApiCertificate",
-        {
-          domainName: props.apiDomainName,
-          validation: acm.CertificateValidation.fromDns(props.hostedZone),
-        },
-      );
-
-      api = new RestApi(this, restApiName, {
-        ...restApiProps,
-        domainName: {
-          domainName: props.apiDomainName,
-          certificate: githubApiCertificate,
-          endpointType: EndpointType.REGIONAL,
-          basePath: "", // Set empty base path
-        },
-        deployOptions: {
-          ...restApiProps.deployOptions,
-          tracingEnabled: props.tracingEnabled ?? false,
-          stageName: "", // Remove stage name when using custom domain
-        },
-      });
-
-      // Create DNS record with no base path
-      new route53.ARecord(this, "ApiDomainRecord", {
-        zone: props.hostedZone,
-        recordName: props.apiDomainName,
-        target: route53.RecordTarget.fromAlias(new targets.ApiGateway(api)),
-      });
-      new cdk.CfnOutput(this, "domainName", {
-        value: api.domainName?.domainName || "",
-      });
-      new cdk.CfnOutput(this, "url", { value: api.url || "" });
-
-      this.domainName = api.domainName?.domainName || "";
-      // Assign the API URL to the public property
-      this.apiUrl = `https://${this.domainName}`;
-    } else {
-      api = new RestApi(
-        this, 
-        restApiName, 
-        restApiProps);
-      // Assign the API URL to the public property
-      this.apiUrl = api.url || "";
-    }
-
-    // Get the stage name from the deployment
-    const stageName = api.deploymentStage.stageName;
-
-    // Set retention for API Gateway execution logs
-    new logs.CfnResourcePolicy(this, "ApiGatewayLogsRetention", {
-      policyName: `${api.restApiId}-logs-retention`,
-      policyDocument: JSON.stringify({
-        Version: "2012-10-17",
-        Statement: [
-          {
-            Effect: "Allow",
-            Principal: { Service: "apigateway.amazonaws.com" },
-            Action: ["logs:PutRetentionPolicy"],
-            Resource: [
-              `arn:aws:logs:${cdk.Stack.of(this).region}:${cdk.Stack.of(this).account}:log-group:API-Gateway-Execution-Logs_${api.restApiId}/${stageName}`,
-            ],
-          },
-        ],
-      }),
-    });
 
     // Check for .npmrc file
     const npmrcPath = path.join(process.env.HOME || "/root", ".npmrc");
@@ -379,36 +82,32 @@ export class UserPoolIdentityProviderGithub extends Construct {
       throw new Error(details);
     }
 
-    const indexFunction = new lambda.Function(this, "indexFunction", {
-      runtime: lambda.Runtime.NODEJS_20_X,
-      handler: "index.handler",
-      tracing: props.tracingEnabled ? lambda.Tracing.ACTIVE : lambda.Tracing.DISABLED,
-      code: lambda.Code.fromAsset(
-        path.join(
-          __dirname,
-          "../node_modules/github-cognito-openid-wrapper/dist-lambda",
-        ),
-        props.includeSourceMaps
-          ? DEBUG_LAMBDA_ASSET_OPTIONS
-          : DEFAULT_LAMBDA_ASSET_OPTIONS,
-      ) as lambda.Code,
-      environment: {
-        COGNITO_REDIRECT_URI: `${props.cognitoHostedUiDomain}/oauth2/idpresponse`,
-        GITHUB_API_URL: "https://api.github.com",
-        GITHUB_CLIENT_ID: props.clientId,
-        GITHUB_CLIENT_SECRET: props.clientSecret,
-        GITHUB_LOGIN_URL: "https://github.com",
-        SOURCE_MAP_SUPPORT: props.includeSourceMaps ? "true" : "false",
-        CONSUMER:
-          props.consumer || "cdk-cognito-userpool-identity-provider-github",
-        VERSION_CONSUMER: props.version || "0.0.0",
-        VERSION_COMPONENT: VERSION,
-      },
-      timeout: Duration.seconds(900),
-      logRetention:
-        props.lambdaLogRetentionDays ?? logs.RetentionDays.ONE_MONTH,
+    // Create API Gateway
+    const { api, domainName, apiUrl } = createApiGateway(this, "GitHubApi", {
+      apiDomainName: props.apiDomainName,
+      hostedZone: props.hostedZone,
+      apiOptions: props.apiOptions,
+      tracingEnabled: props.tracingEnabled,
     });
 
+    this.domainName = domainName;
+    this.apiUrl = apiUrl;
+
+    // Create Lambda function
+    const indexFunction = createLambdaFunction(this, "indexFunction", {
+      cognitoHostedUiDomain: props.cognitoHostedUiDomain,
+      clientId: props.clientId,
+      clientSecret: props.clientSecret,
+      includeSourceMaps: props.includeSourceMaps,
+      tracingEnabled: props.tracingEnabled,
+      consumer: props.consumer,
+      version: props.version,
+      versionComponent: VERSION,
+      logLevel: props.logLevel,
+      lambdaLogRetentionDays: props.lambdaLogRetentionDays,
+    });
+
+    // Add API routes
     api.root.addMethod(
       "GET",
       new LambdaIntegration(indexFunction, {
@@ -423,6 +122,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
       }),
     );
 
+    // Create User Pool Identity Provider if requested
     if (props.createUserPoolIdentityProvider) {
       let apiEndpoint = props.apiDomainName
         ? `https://${props.apiDomainName}`
@@ -440,7 +140,6 @@ export class UserPoolIdentityProviderGithub extends Construct {
             client_secret: props.clientSecret,
             attributes_request_method: "GET",
             attributes_url: `${apiEndpoint}/userinfo`,
-            // When false, no additional attributes are added to the attributes URL
             attributes_url_add_attributes: false,
             oidc_issuer: apiEndpoint,
             authorize_scopes: "openid read:user user:email",
