@@ -9,7 +9,7 @@ import { createApiGateway } from "./api-gateway";
 import { createLambdaFunction } from "./lambda";
 import { IUserPoolIdentityProviderGithubProps } from "./types";
 
-const VERSION: string = "2.0.14";
+const VERSION: string = "2.0.15";
 
 /**
  * GitHub OpenID Connect Wrapper for Cognito
@@ -145,7 +145,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
             authorize_scopes: "openid read:user user:email",
           },
           attributeMapping: {
-            email: "email_verified",
+            email: "email",
             name: "name",
             username: "sub",
             preferredUsername: "preferred_username",
