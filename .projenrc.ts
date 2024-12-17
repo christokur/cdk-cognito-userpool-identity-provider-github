@@ -31,7 +31,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
         "/test-reports",
         "/node_modules",
         "/.DS_Store",
-        "/ai",
+        "/.ai",
         "/env.txt",
         "/cmd.txt",
         "/errors.txt",
