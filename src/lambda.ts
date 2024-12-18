@@ -55,6 +55,8 @@ export function createLambdaFunction(
       LOG_LEVEL: options.logLevel || "info",
     },
     timeout: cdk.Duration.seconds(900),
+    memorySize: 512, // 512 MB of memory
+    ephemeralStorageSize: cdk.Size.mebibytes(512), // 512 MB of /tmp storage
     logRetention:
       options.lambdaLogRetentionDays ?? logs.RetentionDays.ONE_MONTH,
   });
