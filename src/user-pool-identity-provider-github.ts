@@ -123,39 +123,43 @@ export class UserPoolIdentityProviderGithub extends Construct {
       }),
     );
 
-    // Add mock integration for favicon.ico
-    api.root.addResource("favicon.ico").addMethod(
-      "GET",
-      new MockIntegration({
-        integrationResponses: [
-          {
-            statusCode: "200",
-            responseParameters: {
-              "method.response.header.Content-Type": "'image/x-icon'",
-              "method.response.header.Cache-Control": "'public, max-age=31536000'",
+    // Add mock integration for favicon.ico if it doesn't exist
+    if (!api.root.getResource("favicon.ico")) {
+      api.root.addResource("favicon.ico").addMethod(
+        "GET",
+        new MockIntegration({
+          integrationResponses: [
+            {
+              statusCode: "200",
+              responseParameters: {
+                "method.response.header.Content-Type": "'image/x-icon'",
+                "method.response.header.Cache-Control":
+                  "'public, max-age=31536000'",
+              },
+              responseTemplates: {
+                "image/x-icon":
+                  "AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEREQAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAERERAAAAAAARAAERAAAAAAEREQAAAAAAEQABEQAAAAARERAAAAAAABERERAAAAAAERERAAAAAAARERAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              },
             },
-            responseTemplates: {
-              "image/x-icon": "AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEREQAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAERERAAAAAAARAAERAAAAAAEREQAAAAAAEQABEQAAAAARERAAAAAAABERERAAAAAAERERAAAAAAARERAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-            },
+          ],
+          passthroughBehavior: cdk.aws_apigateway.PassthroughBehavior.NEVER,
+          requestTemplates: {
+            "application/json": '{"statusCode": 200}',
           },
-        ],
-        passthroughBehavior: cdk.aws_apigateway.PassthroughBehavior.NEVER,
-        requestTemplates: {
-          "application/json": '{"statusCode": 200}',
+        }),
+        {
+          methodResponses: [
+            {
+              statusCode: "200",
+              responseParameters: {
+                "method.response.header.Content-Type": true,
+                "method.response.header.Cache-Control": true,
+              },
+            },
+          ],
         },
-      }),
-      {
-        methodResponses: [
-          {
-            statusCode: "200",
-            responseParameters: {
-              "method.response.header.Content-Type": true,
-              "method.response.header.Cache-Control": true,
-            },
-          },
-        ],
-      }
-    );
+      );
+    }
 
     // Catch-all proxy route
     api.root.addResource("{proxy+}").addMethod(
