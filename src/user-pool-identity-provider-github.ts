@@ -128,13 +128,12 @@ export class UserPoolIdentityProviderGithub extends Construct {
                 "'public, max-age=31536000'",
             },
             responseTemplates: {
-              "image/x-icon": Buffer.from(
+              "image/x-icon":
                 "AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEREQAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAERERAAAAAAARAAERAAAAAAEREQAAAAAAEQABEQAAAAARERAAAAAAABERERAAAAAAERERAAAAAAARERAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-                'base64'
-              ).toString('binary')
             },
           },
         ],
+        contentHandling: cdk.aws_apigateway.ContentHandling.CONVERT_TO_BINARY,
         passthroughBehavior: cdk.aws_apigateway.PassthroughBehavior.NEVER,
         requestTemplates: {
           "application/json": '{"statusCode": 200}',
