@@ -7,7 +7,7 @@ requires = [
 
 [tool.poetry]
 name = "cdk-cognito-userpool-identity-provider-github"
-version = "2.0.19"
+version = "2.0.20"
 description = "A CDK construct that adds GitHub as an identity provider to a Cognito user pool"
 authors = ["Christo De Lange <christo.delange@sands.com>"]
 license = "(c) 2024 DLDInternet LLC"
@@ -50,7 +50,7 @@ generate-setup-file = false
 python = ">=3.11.8,<3.13.0"
 
 [tool.poetry.group.dev.dependencies]
-invoke = "~2.0.19"
+invoke = "~2.0.20"
 pip = "~24.2"
 poetry = "~1.8.3"
 poethepoet = "~0.24.0"
@@ -319,7 +319,7 @@ args = [
 
 [tool.commitizen]
 name = "cz_conventional_commits"
-version = "2.0.19"
+version = "2.0.20"
 version_files = [
     ".bumpversion.cfg",
     "VERSION",
