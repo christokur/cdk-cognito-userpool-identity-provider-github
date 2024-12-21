@@ -72,6 +72,16 @@ export function createApiGateway(
   let domainName = "";
   let apiUrl = "";
 
+  // Common API Gateway properties
+  const commonApiProps = {
+    binaryMediaTypes: ['image/x-icon'], // Enable binary support for favicon
+    ...restApiProps,
+    deployOptions: {
+      tracingEnabled: options.tracingEnabled ?? false,
+      ...restApiProps.deployOptions,
+    },
+  };
+
   // Set up custom domain if provided
   if (options.apiDomainName && options.hostedZone) {
     // Create certificate for GitHub API Gateway in the current region
@@ -85,7 +95,7 @@ export function createApiGateway(
     );
 
     api = new RestApi(scope, restApiName, {
-      ...restApiProps,
+      ...commonApiProps,
       domainName: {
         domainName: options.apiDomainName,
         certificate: githubApiCertificate,
@@ -93,8 +103,7 @@ export function createApiGateway(
         basePath: "", // Set empty base path
       },
       deployOptions: {
-        ...restApiProps.deployOptions,
-        tracingEnabled: options.tracingEnabled ?? false,
+        ...commonApiProps.deployOptions,
         stageName: "", // Remove stage name when using custom domain
       },
     });
@@ -114,7 +123,7 @@ export function createApiGateway(
     domainName = api.domainName?.domainName || "";
     apiUrl = `https://${domainName}`;
   } else {
-    api = new RestApi(scope, restApiName, restApiProps);
+    api = new RestApi(scope, restApiName, commonApiProps);
     apiUrl = api.url || "";
   }
 
