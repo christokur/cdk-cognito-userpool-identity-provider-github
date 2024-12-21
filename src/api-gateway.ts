@@ -74,7 +74,7 @@ export function createApiGateway(
 
   // Common API Gateway properties
   const commonApiProps = {
-    binaryMediaTypes: ['image/x-icon'], // Enable binary support for favicon
+    binaryMediaTypes: ["image/x-icon"], // Enable binary support for favicon
     ...restApiProps,
     deployOptions: {
       tracingEnabled: options.tracingEnabled ?? false,
