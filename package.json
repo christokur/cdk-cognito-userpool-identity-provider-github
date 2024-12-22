@@ -75,7 +75,7 @@
     "constructs": "^10.0.5"
   },
   "dependencies": {
-    "github-cognito-openid-wrapper": "^1.6.3",
+    "github-cognito-openid-wrapper": "^1.6.4",
     "source-map-support": "^0.5.13"
   },
   "bundledDependencies": [
