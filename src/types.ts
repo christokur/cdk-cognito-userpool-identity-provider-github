@@ -66,6 +66,9 @@ export interface ApiGatewayOptions {
 
   /** Method-level settings for API Gateway */
   readonly methodSettings?: MethodSettings[];
+
+  /** Binary media types supported by the API Gateway (e.g., ['image/x-icon']) */
+  readonly binaryMediaTypes?: string[];
 }
 
 /**

@@ -9,7 +9,7 @@ import { createApiGateway } from "./api-gateway";
 import { createLambdaFunction } from "./lambda";
 import { IUserPoolIdentityProviderGithubProps } from "./types";
 
-const VERSION: string = "2.0.25";
+const VERSION: string = "2.0.26";
 
 /**
  * GitHub OpenID Connect Wrapper for Cognito
