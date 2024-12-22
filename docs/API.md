@@ -166,6 +166,7 @@ const apiGatewayOptions: ApiGatewayOptions = { ... }
 
 | **Name** | **Type** | **Description** |
 | --- | --- | --- |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.binaryMediaTypes">binaryMediaTypes</a></code> | <code>string[]</code> | Binary media types supported by the API Gateway (e.g., ['image/x-icon']). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.cloudWatchRole">cloudWatchRole</a></code> | <code>boolean</code> | Enable CloudWatch role creation for API Gateway logging (default: true). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.dataTraceEnabled">dataTraceEnabled</a></code> | <code>boolean</code> | Enable request/response tracing in API Gateway logs (default: true). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.description">description</a></code> | <code>string</code> | Custom description for the API Gateway. |
@@ -175,6 +176,18 @@ const apiGatewayOptions: ApiGatewayOptions = { ... }
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.methodSettings">methodSettings</a></code> | <code><a href="#cdk-cognito-userpool-identity-provider-github.MethodSettings">MethodSettings</a>[]</code> | Method-level settings for API Gateway. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.metricsEnabled">metricsEnabled</a></code> | <code>boolean</code> | Enable CloudWatch metrics for API Gateway (default: true). |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.stageOptions">stageOptions</a></code> | <code>{[ key: string ]: any}</code> | Additional stage options for API Gateway deployment. |
+
+---
+
+##### `binaryMediaTypes`<sup>Optional</sup> <a name="binaryMediaTypes" id="cdk-cognito-userpool-identity-provider-github.ApiGatewayOptions.property.binaryMediaTypes"></a>
+
+```typescript
+public readonly binaryMediaTypes: string[];
+```
+
+- *Type:* string[]
+
+Binary media types supported by the API Gateway (e.g., ['image/x-icon']).
 
 ---
 

@@ -93,7 +93,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "2.0.26",
+  "version": "2.0.27",
   "jest": {
     "coverageProvider": "v8",
     "verbose": true,
