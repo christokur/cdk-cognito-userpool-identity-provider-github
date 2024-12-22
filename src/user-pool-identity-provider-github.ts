@@ -2,14 +2,14 @@ import { execSync } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 import * as cdk from "aws-cdk-lib";
-import { LambdaIntegration, MockIntegration } from "aws-cdk-lib/aws-apigateway";
+import { LambdaIntegration } from "aws-cdk-lib/aws-apigateway";
 import { CfnUserPoolIdentityProvider } from "aws-cdk-lib/aws-cognito";
 import { Construct } from "constructs";
 import { createApiGateway } from "./api-gateway";
 import { createLambdaFunction } from "./lambda";
 import { IUserPoolIdentityProviderGithubProps } from "./types";
 
-const VERSION: string = "2.0.24";
+const VERSION: string = "2.0.25";
 
 /**
  * GitHub OpenID Connect Wrapper for Cognito
@@ -113,43 +113,6 @@ export class UserPoolIdentityProviderGithub extends Construct {
       new LambdaIntegration(indexFunction, {
         proxy: true,
       }),
-    );
-
-    // Add mock integration for favicon.ico if it doesn't exist
-    api.root.addResource("favicon.ico").addMethod(
-      "GET",
-      new MockIntegration({
-        integrationResponses: [
-          {
-            statusCode: "200",
-            responseParameters: {
-              "method.response.header.Content-Type": "'image/x-icon'",
-              "method.response.header.Cache-Control":
-                "'public, max-age=31536000'",
-            },
-            responseTemplates: {
-              "image/x-icon":
-                "AAABAAEAEBAQAAEABAAoAQAAFgAAACgAAAAQAAAAIAAAAAEABAAAAAAAgAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEREQAAAAAAEAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAERERAAAAAAARAAERAAAAAAEREQAAAAAAEQABEQAAAAARERAAAAAAABERERAAAAAAERERAAAAAAARERAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-            },
-          },
-        ],
-        contentHandling: cdk.aws_apigateway.ContentHandling.CONVERT_TO_BINARY,
-        passthroughBehavior: cdk.aws_apigateway.PassthroughBehavior.NEVER,
-        requestTemplates: {
-          "application/json": '{"statusCode": 200}',
-        },
-      }),
-      {
-        methodResponses: [
-          {
-            statusCode: "200",
-            responseParameters: {
-              "method.response.header.Content-Type": true,
-              "method.response.header.Cache-Control": true,
-            },
-          },
-        ],
-      },
     );
 
     // Catch-all proxy route
