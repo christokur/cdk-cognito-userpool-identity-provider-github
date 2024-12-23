@@ -9,7 +9,7 @@ import { createApiGateway } from "./api-gateway";
 import { createLambdaFunction } from "./lambda";
 import { IUserPoolIdentityProviderGithubProps } from "./types";
 
-const VERSION: string = "2.0.32";
+const VERSION: string = "2.0.33";
 
 /**
  * GitHub OpenID Connect Wrapper for Cognito
@@ -60,7 +60,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
     }
 
     try {
-      execSync("npm install && npm run build", {
+      execSync("npm install && npm run build-dist", {
         cwd: targetDir,
         stdio: "inherit",
         shell: process.env.SHELL,
