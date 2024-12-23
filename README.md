@@ -1,6 +1,6 @@
 # UserPoolIdentityProviderGithub CDK construct
 
-Version: 2.0.29
+Version: 2.0.30
 
 This library bundles the [GitHub OpenID Connect Wrapper for Cognito](https://github.com/TimothyJones/github-cognito-openid-wrapper) as a CDK construct, instead of the original SAM implementation.
 
