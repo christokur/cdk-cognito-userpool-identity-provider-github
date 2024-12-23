@@ -50,7 +50,7 @@ class CognitoGithubProviderProject extends AwsCdkConstructLibrary {
       jsiiVersion: "5.6.0",
       deps: [],
       bundledDeps: [
-        "github-cognito-openid-wrapper@^1.6.9",
+        "github-cognito-openid-wrapper@^1.6.10",
         "source-map-support",
       ],
       devDeps: [
