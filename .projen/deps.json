@@ -106,7 +106,7 @@
     },
     {
       "name": "github-cognito-openid-wrapper",
-      "version": "^1.6.12",
+      "version": "^1.6.13",
       "type": "bundled"
     },
     {
