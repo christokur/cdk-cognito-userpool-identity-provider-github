@@ -325,6 +325,8 @@ const methodSettings: MethodSettings = { ... }
 | --- | --- | --- |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.MethodSettings.property.httpMethod">httpMethod</a></code> | <code>string</code> | The HTTP method. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.MethodSettings.property.resourcePath">resourcePath</a></code> | <code>string</code> | The resource path. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.MethodSettings.property.dataTraceEnabled">dataTraceEnabled</a></code> | <code>boolean</code> | Whether data trace is enabled. |
+| <code><a href="#cdk-cognito-userpool-identity-provider-github.MethodSettings.property.loggingLevel">loggingLevel</a></code> | <code>aws-cdk-lib.aws_apigateway.MethodLoggingLevel</code> | The logging level. |
 | <code><a href="#cdk-cognito-userpool-identity-provider-github.MethodSettings.property.metricsEnabled">metricsEnabled</a></code> | <code>boolean</code> | Whether metrics are enabled. |
 
 ---
@@ -350,6 +352,30 @@ public readonly resourcePath: string;
 - *Type:* string
 
 The resource path.
+
+---
+
+##### `dataTraceEnabled`<sup>Optional</sup> <a name="dataTraceEnabled" id="cdk-cognito-userpool-identity-provider-github.MethodSettings.property.dataTraceEnabled"></a>
+
+```typescript
+public readonly dataTraceEnabled: boolean;
+```
+
+- *Type:* boolean
+
+Whether data trace is enabled.
+
+---
+
+##### `loggingLevel`<sup>Optional</sup> <a name="loggingLevel" id="cdk-cognito-userpool-identity-provider-github.MethodSettings.property.loggingLevel"></a>
+
+```typescript
+public readonly loggingLevel: MethodLoggingLevel;
+```
+
+- *Type:* aws-cdk-lib.aws_apigateway.MethodLoggingLevel
+
+The logging level.
 
 ---
 
