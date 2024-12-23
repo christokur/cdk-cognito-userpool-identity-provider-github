@@ -32,7 +32,7 @@ export function createApiGateway(
     cloudWatchRole: options.apiOptions?.cloudWatchRole ?? true,
     description:
       options.apiOptions?.description ?? "GitHub OIDC Identity Provider API",
-    binaryMediaTypes: options.apiOptions?.binaryMediaTypes ?? ["image/x-icon"],
+    binaryMediaTypes: options.apiOptions?.binaryMediaTypes ?? ["*/*"],
     deployOptions: {
       loggingLevel: options.apiOptions?.loggingLevel ?? MethodLoggingLevel.INFO,
       dataTraceEnabled: options.apiOptions?.dataTraceEnabled ?? true,
@@ -78,6 +78,9 @@ export function createApiGateway(
     ...restApiProps,
     deployOptions: {
       tracingEnabled: options.tracingEnabled ?? false,
+      defaultIntegration: {
+        contentHandling: "CONVERT_TO_BINARY",
+      },
       ...restApiProps.deployOptions,
     },
   };
