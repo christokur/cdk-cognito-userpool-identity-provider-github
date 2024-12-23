@@ -60,7 +60,7 @@ export class UserPoolIdentityProviderGithub extends Construct {
     }
 
     try {
-      execSync("npm install && npm run build-dist", {
+      execSync("npm install && rm -rf dist* && npm run build", {
         cwd: targetDir,
         stdio: "inherit",
         shell: process.env.SHELL,

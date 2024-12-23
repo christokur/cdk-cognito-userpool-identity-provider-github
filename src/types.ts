@@ -21,6 +21,16 @@ export interface MethodSettings {
    * Whether metrics are enabled
    */
   readonly metricsEnabled?: boolean;
+
+  /**
+   * Whether data trace is enabled
+   */
+  readonly dataTraceEnabled?: boolean;
+
+  /**
+   * The logging level
+   */
+  readonly loggingLevel?: MethodLoggingLevel;
 }
 
 /**
